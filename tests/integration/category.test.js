@@ -164,4 +164,81 @@ describe("Category API Integration (Real Database)", () => {
             expect(res.body.data.nama_category).toBe("Makanan");
         });
     });
+
+    describe("GET /api/v1/category", () => {
+        test("should return all categories for authenticated user", async () => {
+            await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
+            await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Gaji", tipe: "pemasukan" });
+
+            const res = await request(app)
+                .get("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.status).toBe("Success");
+            expect(res.body.message).toBe("Berhasil mengambil semua Category");
+            expect(res.body.data.category).toBeDefined();
+            expect(res.body.data.category).toHaveLength(2);
+        });
+
+        test("should return empty list when no categories exist", async () => {
+            const res = await request(app)
+                .get("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.data.category).toHaveLength(0);
+        });
+
+        test("should return 401 without token", async () => {
+            const res = await request(app).get("/api/v1/category");
+
+            expect(res.status).toBe(401);
+        });
+
+        test("should return 401 with invalid token", async () => {
+            const res = await request(app)
+                .get("/api/v1/category")
+                .set("Authorization", "Bearer invalid_token");
+
+            expect(res.status).toBe(401);
+        });
+
+        test("should only return categories for the authenticated user", async () => {
+            await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "User1 Category", tipe: "pemasukan" });
+
+            const userData2 = {
+                username: "cat_testuser2",
+                email: "cat_test2@example.com",
+                password: "Test123!xyz"
+            };
+            await request(app).post("/api/v1/auth/register").send(userData2);
+            const loginRes2 = await request(app)
+                .post("/api/v1/auth/login")
+                .send({ username: "cat_testuser2", password: "Test123!xyz" });
+            const token2 = loginRes2.body.token;
+
+            await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token2}`)
+                .send({ nama_category: "User2 Category", tipe: "pengeluaran" });
+
+            const res = await request(app)
+                .get("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.data.category).toHaveLength(1);
+            expect(res.body.data.category[0].nama_category).toBe("User1 Category");
+        });
+    });
 });

@@ -1,4 +1,4 @@
-import { createCategory } from "../models/category.js";
+import { createCategory, getAllCategory } from "../models/category.js";
 
 export const categoryService = async (id_user, nama_category, tipe) => {
     try {
@@ -27,4 +27,11 @@ export const categoryService = async (id_user, nama_category, tipe) => {
     } catch (err) {
         throw err;
     }
+};
+
+export const getAllCategoryService = async (id_user) => {
+    
+    const category = await getAllCategory(id_user);
+
+    return category ;
 };

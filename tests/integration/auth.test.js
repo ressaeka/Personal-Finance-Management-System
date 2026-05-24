@@ -124,7 +124,7 @@ describe("Auth API Integration (Real Database)", () => {
 
         test("should return profile with valid token", async () => {
             const res = await request(app)
-                .get("/auth/profile")
+                .get("/api/v1/auth/profile")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
@@ -133,14 +133,14 @@ describe("Auth API Integration (Real Database)", () => {
         });
 
         test("should return 401 without token", async () => {
-            const res = await request(app).get("/auth/profile");
+            const res = await request(app).get("/api/v1/auth/profile");
 
             expect(res.status).toBe(401);
         });
 
         test("should return 401 with invalid token", async () => {
             const res = await request(app)
-                .get("/auth/profile")
+                .get("/api/v1/auth/profile")
                 .set("Authorization", "Bearer invalid_token");
 
             expect(res.status).toBe(401);
@@ -149,7 +149,7 @@ describe("Auth API Integration (Real Database)", () => {
 
     describe("POST /auth/logout", () => {
         test("should logout successfully", async () => {
-            const res = await request(app).post("/auth/logout");
+            const res = await request(app).post("/api/v1/auth/logout");
 
             expect(res.status).toBe(200);
             expect(res.body.status).toBe("sukses");

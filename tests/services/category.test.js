@@ -1,11 +1,12 @@
 import { jest } from "@jest/globals";
 
 jest.unstable_mockModule("../../src/models/category.js", () => ({
-  createCategory: jest.fn()
+  createCategory: jest.fn(),
+  getAllCategory: jest.fn()
 }));
 
-const { categoryService } = await import("../../src/service/category.js");
-const { createCategory } = await import("../../src/models/category.js");
+const { categoryService, getAllCategoryService } = await import("../../src/service/category.js");
+const { createCategory, getAllCategory } = await import("../../src/models/category.js");
 
 describe("CATEGORY SERVICE TESTS", () => {
     beforeEach(() => {
@@ -89,6 +90,40 @@ describe("CATEGORY SERVICE TESTS", () => {
 
             await expect(categoryService(1, "Makanan", "pengeluaran"))
                 .rejects.toThrow("Database error");
+        });
+    });
+
+    describe("GET ALL CATEGORY SERVICE", () => {
+        test("should return all categories for a user", async () => {
+            const mockCategories = [
+                { id_category: 1, id_user: 1, nama_category: "Makanan", tipe: "pengeluaran" },
+                { id_category: 2, id_user: 1, nama_category: "Gaji", tipe: "pemasukan" }
+            ];
+            getAllCategory.mockResolvedValue(mockCategories);
+
+            const result = await getAllCategoryService(1);
+
+            expect(result).toBeDefined();
+            expect(result).toHaveLength(2);
+            expect(result[0].nama_category).toBe("Makanan");
+            expect(result[1].nama_category).toBe("Gaji");
+            expect(getAllCategory).toHaveBeenCalledWith(1);
+        });
+
+        test("should return empty array if no categories", async () => {
+            getAllCategory.mockResolvedValue([]);
+
+            const result = await getAllCategoryService(999);
+
+            expect(result).toBeDefined();
+            expect(result).toHaveLength(0);
+            expect(getAllCategory).toHaveBeenCalledWith(999);
+        });
+
+        test("should handle database error", async () => {
+            getAllCategory.mockRejectedValue(new Error("Database error"));
+
+            await expect(getAllCategoryService(1)).rejects.toThrow("Database error");
         });
     });
 });

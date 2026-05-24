@@ -1,5 +1,5 @@
 import express from "express";
-import { categoryService } from "../service/category.js";  
+import { categoryService, getAllCategoryService } from "../service/category.js";  
 
 export const category = async (req, res) => {
     try {
@@ -26,5 +26,26 @@ export const category = async (req, res) => {
             status: "failed",
             message: err.message
         });
+    }
+};
+
+export const getAllCategory = async (req, res, next) => {
+    try {
+        const { id_user} = req.user;  
+
+        const category = await getAllCategoryService(id_user);  
+
+        return res.status(200).json({
+            status:"Success",
+            message:"Berhasil mengambil semua Category",
+            data: {
+                category
+            }
+        })
+    } catch (err) {
+        return res.status(400).json({
+            status:"failed",
+            message:err.message
+        })  
     }
 };
