@@ -1,6 +1,7 @@
 import express from "express";
 import { createUsers, findUserByEmail, findUserByUsername, findUserById } from "../models/auth.js";
 import { generateToken } from "../utils/jwt.js"
+import { hashPassword, comparePassword } from "../utils/bcrypt.js"
 
 
 
@@ -35,16 +36,19 @@ export const registerService = async (userData) => {
         if (existingUser) {
             throw new Error("Username sudah terdaftar");
         }
+
+        const hashedPassword = await hashPassword(password)
             
         const newUser = await createUsers({
             username: username,
             email: email,
-            password: password 
+            password: hashedPassword
         });
         
         console.log("user baru", newUser);
         
-        return newUser;
+        const { password: _, ...userWithoutPassword } = newUser;
+        return userWithoutPassword;
         
     } catch (err) {
         throw err;  
@@ -62,6 +66,12 @@ export const loginService = async ({ username, password }) => {
         
         if (!user) {
             throw new Error("Username atau Password salah, silakan coba kembali");
+        }
+
+        const isMatch = await comparePassword(password, user.password)
+
+        if(!isMatch) {
+            throw new Error("Username dan Password salah",)
         }
 
         const token = generateToken({
@@ -90,7 +100,7 @@ export const getProfileService = async ({ id_user }) => {
         const user = await findUserById(id_user);
         
         if (!user) {
-            throw new Error("User tidak ditemukan");
+            throw new Error("User tidak ditemukan", 400);
         }
         
         return {

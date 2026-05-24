@@ -36,6 +36,7 @@ export const login = async (req, res) => {
             data: result.user,
             token: result.token
         });
+        
     } catch(err) {
         return res.status(400).json({
             status: "ERROR",
