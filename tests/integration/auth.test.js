@@ -12,7 +12,7 @@ const registerUser = async (data = {}) => {
         email: data.email ?? "testuser@example.com",
         password: data.password ?? "Test123!xyz"
     };
-    return await request(app).post("/auth/register").send(payload);
+    return await request(app).post("/api/v1/auth/register").send(payload);
 };
 
 describe("Auth API Integration (Real Database)", () => {
@@ -82,7 +82,7 @@ describe("Auth API Integration (Real Database)", () => {
 
         test("should login successfully with correct credentials", async () => {
             const res = await request(app)
-                .post("/auth/login")
+                .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "Test123!xyz" });
 
             expect(res.status).toBe(200);
@@ -94,7 +94,7 @@ describe("Auth API Integration (Real Database)", () => {
 
         test("should reject wrong password", async () => {
             const res = await request(app)
-                .post("/auth/login")
+                .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "WrongPass123" });
 
             expect(res.status).toBe(400);
@@ -103,7 +103,7 @@ describe("Auth API Integration (Real Database)", () => {
 
         test("should reject non-existent user", async () => {
             const res = await request(app)
-                .post("/auth/login")
+                .post("/api/v1/auth/login")
                 .send({ username: "nonexistent", password: "Test123!xyz" });
 
             expect(res.status).toBe(400);
@@ -117,7 +117,7 @@ describe("Auth API Integration (Real Database)", () => {
         beforeEach(async () => {
             await registerUser();
             const loginRes = await request(app)
-                .post("/auth/login")
+                .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "Test123!xyz" });
             token = loginRes.body.token;
         });
