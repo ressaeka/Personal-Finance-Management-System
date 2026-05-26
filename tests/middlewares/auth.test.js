@@ -36,7 +36,7 @@ describe("Auth Middleware", () => {
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
                 status: "failed",
-                message: "Token tidak ditemukan"
+                message: "Token wajib ada"
             });
             expect(next).not.toHaveBeenCalled();
         });
@@ -49,7 +49,7 @@ describe("Auth Middleware", () => {
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
                 status: "failed",
-                message: "Token tidak ditemukan"
+                message: "Token wajib ada"
             });
         });
     });

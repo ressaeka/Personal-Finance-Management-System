@@ -1,4 +1,4 @@
-import { registerService, loginService, getProfileService } from "../service/auth.js";
+import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
 
 export const register = async (req, res) => {
     try {
@@ -63,6 +63,26 @@ export const profile = async (req, res) => {
             data: result
         });
     } catch(err) {
+        return res.status(400).json({
+            status: "ERROR",
+            message: err.message
+        });
+    }
+};
+
+export const updateUser = async (req, res) => {
+    try {
+        const id_user = req.user.id_user;
+        const { username, email, password } = req.body;
+
+        const result = await updateUserByIdService(id_user, username, email, password);
+
+        return res.status(200).json({
+            status: "sukses",
+            message: "Berhasil memperbarui data user",
+            data: result
+        });
+    } catch (err) {
         return res.status(400).json({
             status: "ERROR",
             message: err.message

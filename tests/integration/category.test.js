@@ -47,7 +47,7 @@ describe("Category API Integration (Real Database)", () => {
                 .send({ nama_category: "Makanan", tipe: "pengeluaran" });
 
             expect(res.status).toBe(201);
-            expect(res.body.status).toBe("Success");
+            expect(res.body.status).toBe("success");
             expect(res.body.message).toBe("Category berhasil dibuat");
             expect(res.body.data.nama_category).toBe("Makanan");
             expect(res.body.data.tipe).toBe("pengeluaran");
@@ -61,7 +61,7 @@ describe("Category API Integration (Real Database)", () => {
                 .send({ nama_category: "Gaji", tipe: "pemasukan" });
 
             expect(res.status).toBe(201);
-            expect(res.body.status).toBe("Success");
+            expect(res.body.status).toBe("success");
             expect(res.body.data.nama_category).toBe("Gaji");
             expect(res.body.data.tipe).toBe("pemasukan");
         });
@@ -181,7 +181,7 @@ describe("Category API Integration (Real Database)", () => {
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
-            expect(res.body.status).toBe("Success");
+            expect(res.body.status).toBe("success");
             expect(res.body.message).toBe("Berhasil mengambil semua Category");
             expect(res.body.data.category).toBeDefined();
             expect(res.body.data.category).toHaveLength(2);
@@ -239,6 +239,185 @@ describe("Category API Integration (Real Database)", () => {
             expect(res.status).toBe(200);
             expect(res.body.data.category).toHaveLength(1);
             expect(res.body.data.category[0].nama_category).toBe("User1 Category");
+        });
+    });
+
+    describe("GET /api/v1/category/:id_category", () => {
+        let createdCategoryId;
+
+        beforeEach(async () => {
+            const res = await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
+            createdCategoryId = res.body.data.id_category;
+        });
+
+        test("should return category by ID", async () => {
+            const res = await request(app)
+                .get(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.status).toBe("success");
+            expect(res.body.data.category.nama_category).toBe("Makanan");
+            expect(res.body.data.category.tipe).toBe("pengeluaran");
+        });
+
+        test("should return 400 for non-existent category", async () => {
+            const res = await request(app)
+                .get("/api/v1/category/99999")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+            expect(res.body.message).toBe("Category tidak ditemukan");
+        });
+
+        test("should return 400 for invalid ID format", async () => {
+            const res = await request(app)
+                .get("/api/v1/category/abc")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+            expect(res.body.message).toBe("ID category tidak valid");
+        });
+
+        test("should return 401 without token", async () => {
+            const res = await request(app)
+                .get(`/api/v1/category/${createdCategoryId}`);
+
+            expect(res.status).toBe(401);
+        });
+    });
+
+    describe("PUT /api/v1/category/:id_category", () => {
+        let createdCategoryId;
+
+        beforeEach(async () => {
+            const res = await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
+            createdCategoryId = res.body.data.id_category;
+        });
+
+        test("should update category successfully", async () => {
+            const res = await request(app)
+                .put(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Minuman", tipe: "pengeluaran" });
+
+            expect(res.status).toBe(200);
+            expect(res.body.status).toBe("success");
+            expect(res.body.data.nama_category).toBe("Minuman");
+        });
+
+        test("should return 400 for non-existent category", async () => {
+            const res = await request(app)
+                .put("/api/v1/category/99999")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Minuman", tipe: "pengeluaran" });
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+        });
+
+        test("should return 400 for invalid ID", async () => {
+            const res = await request(app)
+                .put("/api/v1/category/abc")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Minuman", tipe: "pengeluaran" });
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+        });
+
+        test("should return 400 for invalid nama_category", async () => {
+            const res = await request(app)
+                .put(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "ab", tipe: "pengeluaran" });
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+        });
+
+        test("should return 401 without token", async () => {
+            const res = await request(app)
+                .put(`/api/v1/category/${createdCategoryId}`)
+                .send({ nama_category: "Minuman", tipe: "pengeluaran" });
+
+            expect(res.status).toBe(401);
+        });
+    });
+
+    describe("DELETE /api/v1/category/:id_category", () => {
+        let createdCategoryId;
+
+        beforeEach(async () => {
+            const res = await request(app)
+                .post("/api/v1/category")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
+            createdCategoryId = res.body.data.id_category;
+        });
+
+        test("should delete category successfully (soft delete)", async () => {
+            const res = await request(app)
+                .delete(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.status).toBe("success");
+            expect(res.body.message).toBe("Category berhasil dihapus");
+
+            const getRes = await request(app)
+                .get(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(getRes.status).toBe(400);
+            expect(getRes.body.message).toBe("Category tidak ditemukan");
+        });
+
+        test("should return 400 for already deleted category", async () => {
+            await request(app)
+                .delete(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            const res = await request(app)
+                .delete(`/api/v1/category/${createdCategoryId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+            expect(res.body.message).toBe("Category tidak ditemukan atau sudah dihapus");
+        });
+
+        test("should return 400 for non-existent category", async () => {
+            const res = await request(app)
+                .delete("/api/v1/category/99999")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+        });
+
+        test("should return 400 for invalid ID", async () => {
+            const res = await request(app)
+                .delete("/api/v1/category/abc")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(400);
+            expect(res.body.status).toBe("failed");
+        });
+
+        test("should return 401 without token", async () => {
+            const res = await request(app)
+                .delete(`/api/v1/category/${createdCategoryId}`);
+
+            expect(res.status).toBe(401);
         });
     });
 });

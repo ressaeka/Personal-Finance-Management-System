@@ -41,3 +41,15 @@ export const findUserById = async (id_user) => {
 
     return query.rows[0] ?? null
 }
+
+export const updateUserById = async (id_user, username, email, password) => {
+    const query = await pool.query(
+        `UPDATE users
+        SET username = $1, email = $2, password = $3
+        WHERE id_user = $4
+        RETURNING id_user, username, email`,
+        [username, email, password, id_user]
+    )
+    return query.rows[0] ?? null;
+}
+

@@ -4,7 +4,8 @@ jest.unstable_mockModule("../../src/models/auth.js", () => ({
   findUserByEmail: jest.fn(),
   findUserByUsername: jest.fn(),
   createUsers: jest.fn(),
-  findUserById: jest.fn()
+  findUserById: jest.fn(),
+  updateUserById: jest.fn()
 }));
 
 jest.unstable_mockModule("../../src/utils/bcrypt.js", () => ({
@@ -16,9 +17,9 @@ jest.unstable_mockModule("../../src/utils/jwt.js", () => ({
   generateToken: jest.fn()
 }));
 
-const { registerService, loginService, getProfileService } = await import("../../src/service/auth.js");
-const { findUserByEmail, findUserByUsername, createUsers, findUserById } = await import("../../src/models/auth.js");
-const { comparePassword } = await import("../../src/utils/bcrypt.js");
+const { registerService, loginService, getProfileService, updateUserByIdService } = await import("../../src/service/auth.js");
+const { findUserByEmail, findUserByUsername, createUsers, findUserById, updateUserById } = await import("../../src/models/auth.js");
+const { hashPassword, comparePassword } = await import("../../src/utils/bcrypt.js");
 const { generateToken } = await import("../../src/utils/jwt.js");
 
 describe("AUTH SERVICE TESTS", () => {
@@ -230,17 +231,102 @@ describe("AUTH SERVICE TESTS", () => {
         });
     });
 
-    describe("LOGOUT", () => {
-        test("logout should not throw error", () => {
-            expect(true).toBe(true);
+    describe("UPDATE USER BY ID SERVICE", () => {
+        beforeEach(() => {
+            hashPassword.mockResolvedValue("hashed_new_password");
         });
-        
-        test("logout should clear token", () => {
-            let token = "jwt-token-123";
-            expect(token).toBeDefined();
-            
-            token = null;
-            expect(token).toBeNull();
+
+        describe("Validation Tests", () => {
+            test("should throw error if id_user is missing", async () => {
+                await expect(updateUserByIdService(null, "user", "a@b.com", "Test123!x"))
+                    .rejects.toThrow("Id user tidak valid");
+            });
+
+            test("should throw error if id_user is not a number", async () => {
+                await expect(updateUserByIdService("abc", "user", "a@b.com", "Test123!x"))
+                    .rejects.toThrow("Id user tidak valid");
+            });
+
+            test("should throw error if username too short", async () => {
+                await expect(updateUserByIdService(1, "ab", "a@b.com", "Test123!x"))
+                    .rejects.toThrow("Username harus diisi dan minimal 3 karakter");
+            });
+
+            test("should throw error if email is invalid", async () => {
+                await expect(updateUserByIdService(1, "user", "invalid", "Test123!x"))
+                    .rejects.toThrow("Format email tidak valid");
+            });
+
+            test("should throw error if password is weak", async () => {
+                await expect(updateUserByIdService(1, "user", "a@b.com", "weak"))
+                    .rejects.toThrow("Password harus minimal");
+            });
+        });
+
+        describe("Duplicate Check Tests", () => {
+            test("should throw error if email already taken by another user", async () => {
+                findUserByEmail.mockResolvedValue({ id_user: 2, email: "taken@b.com" });
+
+                await expect(updateUserByIdService(1, "user", "taken@b.com", "Test123!x"))
+                    .rejects.toThrow("Email sudah terdaftar");
+            });
+
+            test("should allow update if email belongs to same user", async () => {
+                findUserByEmail.mockResolvedValue({ id_user: 1, email: "user@b.com" });
+                findUserByUsername.mockResolvedValue(null);
+                updateUserById.mockResolvedValue({
+                    id_user: 1,
+                    username: "user",
+                    email: "user@b.com"
+                });
+
+                const result = await updateUserByIdService(1, "user", "user@b.com", "Test123!x");
+
+                expect(result).toBeDefined();
+                expect(result.id_user).toBe(1);
+                expect(updateUserById).toHaveBeenCalledWith(1, "user", "user@b.com", "hashed_new_password");
+            });
+
+            test("should throw error if username already taken by another user", async () => {
+                findUserByEmail.mockResolvedValue(null);
+                findUserByUsername.mockResolvedValue({ id_user: 2, username: "taken" });
+
+                await expect(updateUserByIdService(1, "taken", "a@b.com", "Test123!x"))
+                    .rejects.toThrow("Username sudah terdaftar");
+            });
+        });
+
+        describe("Success Tests", () => {
+            test("should update user successfully", async () => {
+                const mockUpdatedUser = {
+                    id_user: 1,
+                    username: "newuser",
+                    email: "new@b.com"
+                };
+
+                findUserByEmail.mockResolvedValue(null);
+                findUserByUsername.mockResolvedValue(null);
+                updateUserById.mockResolvedValue(mockUpdatedUser);
+
+                const result = await updateUserByIdService(1, "newuser", "new@b.com", "NewPass123!");
+
+                expect(result).toBeDefined();
+                expect(result.id_user).toBe(1);
+                expect(result.username).toBe("newuser");
+                expect(result.email).toBe("new@b.com");
+                expect(result.password).toBeUndefined();
+                expect(hashPassword).toHaveBeenCalledWith("NewPass123!");
+                expect(updateUserById).toHaveBeenCalled();
+            });
+
+            test("should throw error if user to update not found", async () => {
+                findUserByEmail.mockResolvedValue(null);
+                findUserByUsername.mockResolvedValue(null);
+                updateUserById.mockResolvedValue(null);
+
+                await expect(updateUserByIdService(999, "user", "a@b.com", "Test123!x"))
+                    .rejects.toThrow("Gagal memperbarui data user");
+            });
         });
     });
 });

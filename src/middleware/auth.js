@@ -8,7 +8,7 @@ export const authenticate = (req, res, next) => {
         if (!authorization) {
             return res.status(401).json({
                 status: "failed",
-                message: "Token tidak ditemukan"
+                message: "Token wajib ada"
             });
         }
 
