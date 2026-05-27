@@ -30,7 +30,7 @@ export const authenticate = (req, res, next) => {
         if (!process.env.JWT_SECRET) {
             console.error("JWT_SECRET tidak diset di environment");
             return res.status(500).json({
-                status: "ERROR",
+                status: "failed",
                 message: "Konfigurasi server error"
             });
         }
@@ -44,13 +44,13 @@ export const authenticate = (req, res, next) => {
     } catch (err) {
         if (err.name === 'TokenExpiredError') {
             return res.status(401).json({
-                status: "ERROR",
+                status: "failed",
                 message: "Token sudah kadaluarsa, silakan login ulang"
             });
         }
         
         return res.status(401).json({
-            status: "ERROR",
+            status: "failed",
             message: "Token tidak valid"
         });
     }

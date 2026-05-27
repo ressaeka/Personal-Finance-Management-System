@@ -102,7 +102,7 @@ describe("Auth Middleware", () => {
             
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({
-                status: "ERROR",
+                status: "failed",
                 message: "Konfigurasi server error"
             });
         });
@@ -144,7 +144,7 @@ describe("Auth Middleware", () => {
             
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
-                status: "ERROR",
+                status: "failed",
                 message: "Token sudah kadaluarsa, silakan login ulang"
             });
             expect(next).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe("Auth Middleware", () => {
             
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
-                status: "ERROR",
+                status: "failed",
                 message: "Token tidak valid"
             });
             expect(next).not.toHaveBeenCalled();
@@ -184,7 +184,7 @@ describe("Auth Middleware", () => {
             
             expect(res.status).toHaveBeenCalledWith(401);
             expect(res.json).toHaveBeenCalledWith({
-                status: "ERROR",
+                status: "failed",
                 message: "Token tidak valid"
             });
         });

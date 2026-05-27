@@ -16,13 +16,4 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
 });
 
-(async () => {
-  try {
-    const result = await pool.query("SELECT NOW()");
-    console.log("DB CONNECTION OK:", result.rows[0]);
-  } catch (err) {
-    console.log("DB CONNECTION ERROR:", err.message);
-  }
-})();
-
 export default pool;

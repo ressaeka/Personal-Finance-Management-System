@@ -51,6 +51,7 @@ describe("CATEGORY SERVICE TESTS", () => {
                 nama_category: "Gaji",
                 tipe: "pemasukan"
             };
+            getAllCategory.mockResolvedValue([]);
             createCategory.mockResolvedValue(mockCategory);
 
             const result = await categoryService(1, "Gaji", "pemasukan");
@@ -69,6 +70,7 @@ describe("CATEGORY SERVICE TESTS", () => {
                 nama_category: "Makanan",
                 tipe: "pengeluaran"
             };
+            getAllCategory.mockResolvedValue([]);
             createCategory.mockResolvedValue(mockCategory);
 
             const result = await categoryService(1, "Makanan", "pengeluaran");
@@ -82,6 +84,7 @@ describe("CATEGORY SERVICE TESTS", () => {
 
     describe("Error Handling Tests", () => {
         test("should throw error if createCategory returns null", async () => {
+            getAllCategory.mockResolvedValue([]);
             createCategory.mockResolvedValue(null);
 
             await expect(categoryService(1, "Makanan", "pengeluaran"))
@@ -89,10 +92,20 @@ describe("CATEGORY SERVICE TESTS", () => {
         });
 
         test("should throw error if createCategory throws", async () => {
+            getAllCategory.mockResolvedValue([]);
             createCategory.mockRejectedValue(new Error("Database error"));
 
             await expect(categoryService(1, "Makanan", "pengeluaran"))
                 .rejects.toThrow("Database error");
+        });
+
+        test("should throw error if duplicate nama_category", async () => {
+            getAllCategory.mockResolvedValue([
+                { id_category: 1, nama_category: "Makanan", tipe: "pengeluaran" }
+            ]);
+
+            await expect(categoryService(1, "Makanan", "pengeluaran"))
+                .rejects.toThrow("Nama category sudah ada");
         });
     });
 

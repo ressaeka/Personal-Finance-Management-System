@@ -1,0 +1,13 @@
+import express from "express";
+import { createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi } from "../controllers/transaksi.js";
+import { authenticate } from "../middleware/auth.js";
+
+const router = express.Router();
+
+router.post("/", authenticate, createTransaksi);
+router.get("/", authenticate, getAllTransaksi);
+router.get("/:id_transaksi", authenticate, getTransaksiById);
+router.put("/:id_transaksi", authenticate, updateTransaksi);
+router.delete("/:id_transaksi", authenticate, deleteTransaksi);
+
+export default router;

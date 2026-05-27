@@ -1,4 +1,3 @@
-import express from "express";
 import { categoryService, getAllCategoryService, getCategoryByIdService, updateCategoryService, deleteCategoryService } from "../service/category.js";  
 
 export const category = async (req, res) => {
@@ -20,7 +19,7 @@ export const category = async (req, res) => {
         });
         
     } catch (err) {
-        return res.status(400).json({
+        return res.status(err.statusCode || 400).json({
             status: "failed",
             message: err.message
         });
@@ -41,7 +40,7 @@ export const getAllCategory = async (req, res) => {
             }
         })
     } catch (err) {
-        return res.status(400).json({
+        return res.status(err.statusCode || 400).json({
             status:"failed",
             message:err.message
         })  
@@ -64,7 +63,7 @@ export const getCategoryById = async (req, res) => {
         });
         
     } catch (err) {
-        return res.status(400).json({
+        return res.status(err.statusCode || 400).json({
             status: "failed",
             message: err.message
         });
@@ -86,7 +85,7 @@ export const updateCategory = async (req, res) => {
         });
         
     } catch (err) {
-        return res.status(400).json({
+        return res.status(err.statusCode || 400).json({
             status: "failed",
             message: err.message
         });
@@ -101,14 +100,14 @@ export const deleteCategory = async (req, res) => {
         
         const category = await deleteCategoryService(id_category, id_user);
         
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             message: "Category berhasil dihapus",
             data: category
         });
         
     } catch (err) {
-        res.status(400).json({
+        return res.status(err.statusCode || 400).json({
             status: "failed",
             message: err.message
         });

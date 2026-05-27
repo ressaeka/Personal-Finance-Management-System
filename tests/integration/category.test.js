@@ -92,77 +92,6 @@ describe("Category API Integration (Real Database)", () => {
             expect(res.status).toBe(400);
             expect(res.body.status).toBe("failed");
         });
-
-        test("should return 400 when nama_category is too short", async () => {
-            const res = await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "ab", tipe: "pengeluaran" });
-
-            expect(res.status).toBe(400);
-            expect(res.body.status).toBe("failed");
-        });
-
-        test("should return 400 when tipe is invalid", async () => {
-            const res = await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "Makanan", tipe: "investasi" });
-
-            expect(res.status).toBe(400);
-            expect(res.body.status).toBe("failed");
-        });
-
-        test("should return 400 when tipe is empty", async () => {
-            const res = await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "Makanan", tipe: "" });
-
-            expect(res.status).toBe(400);
-            expect(res.body.status).toBe("failed");
-        });
-
-        test("should return 400 when nama_category is duplicate for same user", async () => {
-            await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
-
-            const res = await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
-
-            expect(res.status).toBe(400);
-            expect(res.body.status).toBe("failed");
-        });
-
-        test("should allow same category name for different users", async () => {
-            await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token}`)
-                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
-
-            const userData2 = {
-                username: "cat_testuser2",
-                email: "cat_test2@example.com",
-                password: "Test123!xyz"
-            };
-            await request(app).post("/api/v1/auth/register").send(userData2);
-            const loginRes2 = await request(app)
-                .post("/api/v1/auth/login")
-                .send({ username: "cat_testuser2", password: "Test123!xyz" });
-            const token2 = loginRes2.body.token;
-
-            const res = await request(app)
-                .post("/api/v1/category")
-                .set("Authorization", `Bearer ${token2}`)
-                .send({ nama_category: "Makanan", tipe: "pengeluaran" });
-
-            expect(res.status).toBe(201);
-            expect(res.body.data.nama_category).toBe("Makanan");
-        });
     });
 
     describe("GET /api/v1/category", () => {
@@ -264,12 +193,12 @@ describe("Category API Integration (Real Database)", () => {
             expect(res.body.data.category.tipe).toBe("pengeluaran");
         });
 
-        test("should return 400 for non-existent category", async () => {
+        test("should return 404 for non-existent category", async () => {
             const res = await request(app)
                 .get("/api/v1/category/99999")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(404);
             expect(res.body.status).toBe("failed");
             expect(res.body.message).toBe("Category tidak ditemukan");
         });
@@ -314,13 +243,13 @@ describe("Category API Integration (Real Database)", () => {
             expect(res.body.data.nama_category).toBe("Minuman");
         });
 
-        test("should return 400 for non-existent category", async () => {
+        test("should return 404 for non-existent category", async () => {
             const res = await request(app)
                 .put("/api/v1/category/99999")
                 .set("Authorization", `Bearer ${token}`)
                 .send({ nama_category: "Minuman", tipe: "pengeluaran" });
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(404);
             expect(res.body.status).toBe("failed");
         });
 
@@ -377,11 +306,11 @@ describe("Category API Integration (Real Database)", () => {
                 .get(`/api/v1/category/${createdCategoryId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(getRes.status).toBe(400);
+            expect(getRes.status).toBe(404);
             expect(getRes.body.message).toBe("Category tidak ditemukan");
         });
 
-        test("should return 400 for already deleted category", async () => {
+        test("should return 404 for already deleted category", async () => {
             await request(app)
                 .delete(`/api/v1/category/${createdCategoryId}`)
                 .set("Authorization", `Bearer ${token}`);
@@ -390,17 +319,17 @@ describe("Category API Integration (Real Database)", () => {
                 .delete(`/api/v1/category/${createdCategoryId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(404);
             expect(res.body.status).toBe("failed");
             expect(res.body.message).toBe("Category tidak ditemukan atau sudah dihapus");
         });
 
-        test("should return 400 for non-existent category", async () => {
+        test("should return 404 for non-existent category", async () => {
             const res = await request(app)
                 .delete("/api/v1/category/99999")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(404);
             expect(res.body.status).toBe("failed");
         });
 

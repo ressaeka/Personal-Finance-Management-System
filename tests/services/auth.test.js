@@ -47,14 +47,14 @@ describe("AUTH SERVICE TESTS", () => {
                 await expect(registerService(userData)).rejects.toThrow("Username, email dan password wajib diisi");
             });
             
-            test("should throw error if username less than 6 characters", async () => {
+            test("should throw error if username less than 3 characters", async () => {
                 const userData = {
-                    username: "abc",
+                    username: "ab",
                     email: "test@example.com",
                     password: "Test123!xyz"
                 };
                 
-                await expect(registerService(userData)).rejects.toThrow("Username minimal 6 karakter");
+                await expect(registerService(userData)).rejects.toThrow("Username minimal 3 karakter");
             });
             
             test("should throw error if email format is invalid", async () => {
@@ -152,7 +152,7 @@ describe("AUTH SERVICE TESTS", () => {
                 await expect(loginService({
                     username: "nonexistent",
                     password: "Test123!xyz"
-                })).rejects.toThrow("Username atau Password salah, silakan coba kembali");
+                })).rejects.toThrow("Username atau password salah");
             });
             
             test("should throw error if password is incorrect", async () => {
@@ -168,7 +168,7 @@ describe("AUTH SERVICE TESTS", () => {
                 await expect(loginService({
                     username: "testuser",
                     password: "WrongPass123"
-                })).rejects.toThrow("Username dan Password salah");
+                })).rejects.toThrow("Username atau password salah");
             });
         });
         
@@ -274,6 +274,7 @@ describe("AUTH SERVICE TESTS", () => {
             test("should allow update if email belongs to same user", async () => {
                 findUserByEmail.mockResolvedValue({ id_user: 1, email: "user@b.com" });
                 findUserByUsername.mockResolvedValue(null);
+                findUserById.mockResolvedValue({ id_user: 1, password: "old_hashed" });
                 updateUserById.mockResolvedValue({
                     id_user: 1,
                     username: "user",
@@ -306,6 +307,7 @@ describe("AUTH SERVICE TESTS", () => {
 
                 findUserByEmail.mockResolvedValue(null);
                 findUserByUsername.mockResolvedValue(null);
+                findUserById.mockResolvedValue({ id_user: 1, password: "old_hashed" });
                 updateUserById.mockResolvedValue(mockUpdatedUser);
 
                 const result = await updateUserByIdService(1, "newuser", "new@b.com", "NewPass123!");
@@ -322,6 +324,7 @@ describe("AUTH SERVICE TESTS", () => {
             test("should throw error if user to update not found", async () => {
                 findUserByEmail.mockResolvedValue(null);
                 findUserByUsername.mockResolvedValue(null);
+                findUserById.mockResolvedValue({ id_user: 999, password: "old_hashed" });
                 updateUserById.mockResolvedValue(null);
 
                 await expect(updateUserByIdService(999, "user", "a@b.com", "Test123!x"))
