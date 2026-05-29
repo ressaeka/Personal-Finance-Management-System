@@ -1,5 +1,12 @@
 import pool from "../config/database.js";
 
+/**
+ * Menghitung total pemasukan, pengeluaran, dan saldo dalam rentang tanggal
+ * @param {number} id_user - ID user
+ * @param {string} tanggal_awal - Tanggal awal (YYYY-MM-DD)
+ * @param {string} tanggal_akhir - Tanggal akhir (YYYY-MM-DD)
+ * @returns {Promise<{total_pemasukan: number, total_pengeluaran: number, saldo: number}>} Object ringkasan keuangan
+ */
 const hitungTransaksi = async (id_user, tanggal_awal, tanggal_akhir) => {
     const result = await pool.query(
         `SELECT
@@ -15,6 +22,14 @@ const hitungTransaksi = async (id_user, tanggal_awal, tanggal_akhir) => {
     return result.rows[0];
 };
 
+/**
+ * Membuat atau memperbarui laporan (upsert berdasarkan id_user + periode)
+ * @param {number} id_user - ID user
+ * @param {string} periode - Periode laporan (YYYY-MM)
+ * @param {string} tanggal_awal - Tanggal awal periode
+ * @param {string} tanggal_akhir - Tanggal akhir periode
+ * @returns {Promise<Object|null>} Data laporan yang di-insert/update, atau null
+ */
 export const upsertLaporan = async (id_user, periode, tanggal_awal, tanggal_akhir) => {
     const { total_pemasukan, total_pengeluaran, saldo } = await hitungTransaksi(id_user, tanggal_awal, tanggal_akhir);
 
@@ -35,6 +50,11 @@ export const upsertLaporan = async (id_user, periode, tanggal_awal, tanggal_akhi
     return query.rows[0] ?? null;
 };
 
+/**
+ * Mengambil semua laporan milik user
+ * @param {number} id_user - ID user
+ * @returns {Promise<Array>} Array laporan
+ */
 export const getAllLaporan = async (id_user) => {
     const query = await pool.query(
         `SELECT id_laporan, id_user, periode, tanggal_awal, tanggal_akhir,
@@ -47,6 +67,12 @@ export const getAllLaporan = async (id_user) => {
     return query.rows;
 };
 
+/**
+ * Mengambil satu laporan berdasarkan user dan periode
+ * @param {number} id_user - ID user
+ * @param {string} periode - Periode laporan (YYYY-MM)
+ * @returns {Promise<Object|null>} Data laporan atau null
+ */
 export const getLaporanByPeriode = async (id_user, periode) => {
     const query = await pool.query(
         `SELECT id_laporan, id_user, periode, tanggal_awal, tanggal_akhir,
@@ -58,6 +84,13 @@ export const getLaporanByPeriode = async (id_user, periode) => {
     return query.rows[0] ?? null;
 };
 
+/**
+ * Generate laporan bulanan berdasarkan tahun dan bulan
+ * @param {number} id_user - ID user
+ * @param {number} tahun - Tahun (YYYY)
+ * @param {number} bulan - Bulan (1-12)
+ * @returns {Promise<Object|null>} Data laporan yang digenerate
+ */
 export const generateLaporanBulanan = async (id_user, tahun, bulan) => {
     const periode = `${tahun}-${String(bulan).padStart(2, '0')}`;
     const tanggal_awal = `${tahun}-${String(bulan).padStart(2, '0')}-01`;
@@ -66,6 +99,12 @@ export const generateLaporanBulanan = async (id_user, tahun, bulan) => {
     return await upsertLaporan(id_user, periode, tanggal_awal, tanggal_akhir);
 };
 
+/**
+ * Me-rekap ulang semua laporan yang mencakup tanggal tertentu
+ * @param {number} id_user - ID user
+ * @param {string} tanggal - Tanggal acuan (YYYY-MM-DD)
+ * @returns {Promise<Array>} Array laporan yang telah di-rekap ulang
+ */
 export const rekapOtomatis = async (id_user, tanggal) => {
     const laporanList = await pool.query(
         `SELECT id_laporan, periode, tanggal_awal, tanggal_akhir
@@ -92,6 +131,12 @@ export const rekapOtomatis = async (id_user, tanggal) => {
     return updated;
 };
 
+/**
+ * Menghapus laporan berdasarkan id_laporan dan id_user
+ * @param {number} id_laporan - ID laporan
+ * @param {number} id_user - ID pemilik
+ * @returns {Promise<Object|null>} Data laporan yang dihapus (id_laporan), atau null
+ */
 export const deleteLaporan = async (id_laporan, id_user) => {
     const query = await pool.query(
         `DELETE FROM laporan

@@ -97,7 +97,7 @@ describe("Auth API Integration (Real Database)", () => {
                 .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "WrongPass123" });
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(401);
             expect(res.body.status).toBe("failed");
         });
 
@@ -106,7 +106,7 @@ describe("Auth API Integration (Real Database)", () => {
                 .post("/api/v1/auth/login")
                 .send({ username: "nonexistent", password: "Test123!xyz" });
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(401);
             expect(res.body.status).toBe("failed");
         });
     });
@@ -200,7 +200,15 @@ describe("Auth API Integration (Real Database)", () => {
 
     describe("POST /auth/logout", () => {
         test("should logout successfully", async () => {
-            const res = await request(app).post("/api/v1/auth/logout");
+            await registerUser();
+            const loginRes = await request(app)
+                .post("/api/v1/auth/login")
+                .send({ username: "testuser", password: "Test123!xyz" });
+            const token = loginRes.body.data.token;
+
+            const res = await request(app)
+                .post("/api/v1/auth/logout")
+                .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
             expect(res.body.status).toBe("success");

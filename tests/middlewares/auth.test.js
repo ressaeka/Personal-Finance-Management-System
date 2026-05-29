@@ -33,12 +33,10 @@ describe("Auth Middleware", () => {
         test("should return 401 if no authorization header", () => {
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token wajib ada"
-            });
-            expect(next).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token wajib ada");
         });
         
         test("should return 401 if authorization header is empty", () => {
@@ -46,11 +44,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token wajib ada"
-            });
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token wajib ada");
         });
     });
     
@@ -60,12 +57,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Format token salah. Gunakan: Bearer <token>"
-            });
-            expect(next).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Format token salah. Gunakan: Bearer <token>");
         });
         
         test("should return 401 if only 'Bearer' without token", () => {
@@ -73,11 +68,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token kosong"
-            });
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token kosong");
         });
         
         test("should return 401 if token has no space after Bearer", () => {
@@ -85,11 +79,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Format token salah. Gunakan: Bearer <token>"
-            });
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Format token salah. Gunakan: Bearer <token>");
         });
     });
     
@@ -100,11 +93,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Konfigurasi server error"
-            });
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(500);
+            expect(err.message).toBe("Internal Server Error");
         });
     });
     
@@ -142,12 +134,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token sudah kadaluarsa, silakan login ulang"
-            });
-            expect(next).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token sudah kadaluarsa, silakan login ulang");
         });
     });
     
@@ -163,12 +153,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token tidak valid"
-            });
-            expect(next).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token tidak valid");
         });
         
         test("should return 401 for any other JWT error", () => {
@@ -182,11 +170,10 @@ describe("Auth Middleware", () => {
             
             authenticate(req, res, next);
             
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                status: "failed",
-                message: "Token tidak valid"
-            });
+            expect(next).toHaveBeenCalled();
+            const err = next.mock.calls[0][0];
+            expect(err.statusCode).toBe(401);
+            expect(err.message).toBe("Token tidak valid");
         });
     });
 });

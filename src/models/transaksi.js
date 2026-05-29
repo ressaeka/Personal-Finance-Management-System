@@ -1,5 +1,14 @@
 import pool from "../config/database.js";
 
+/**
+ * Membuat transaksi baru
+ * @param {number} id_user - ID pemilik transaksi
+ * @param {number} id_category - ID kategori transaksi
+ * @param {number} jumlah - Jumlah nominal transaksi
+ * @param {string} deskripsi - Deskripsi transaksi
+ * @param {string} tanggal - Tanggal transaksi (YYYY-MM-DD)
+ * @returns {Promise<Object|null>} Data transaksi baru, atau null
+ */
 export const createTransaksi = async (id_user, id_category, jumlah, deskripsi, tanggal) => {
     const query = await pool.query(
         `INSERT INTO transaksi (id_user, id_category, jumlah, deskripsi, tanggal, created_at, updated_at)
@@ -10,6 +19,12 @@ export const createTransaksi = async (id_user, id_category, jumlah, deskripsi, t
     return query.rows[0] ?? null;
 };
 
+/**
+ * Mengambil semua transaksi milik user (soft-deleted tidak termasuk)
+ * Dilakukan JOIN dengan tabel category untuk menampilkan nama_category dan tipe
+ * @param {number} id_user - ID user
+ * @returns {Promise<Array>} Array transaksi
+ */
 export const getAllTransaksi = async (id_user) => {
     const query = await pool.query(
         `SELECT t.id_transaksi, t.id_user, t.id_category, c.nama_category, c.tipe, 
@@ -23,6 +38,12 @@ export const getAllTransaksi = async (id_user) => {
     return query.rows;
 };
 
+/**
+ * Mengambil satu transaksi berdasarkan id dan pemilik
+ * @param {number} id_transaksi - ID transaksi
+ * @param {number} id_user - ID pemilik
+ * @returns {Promise<Object|null>} Data transaksi atau null
+ */
 export const getTransaksiById = async (id_transaksi, id_user) => {
     const query = await pool.query(
         `SELECT t.id_transaksi, t.id_user, t.id_category, c.nama_category, c.tipe, 
@@ -35,6 +56,16 @@ export const getTransaksiById = async (id_transaksi, id_user) => {
     return query.rows[0] ?? null;
 };
 
+/**
+ * Memperbarui data transaksi
+ * @param {number} id_transaksi - ID transaksi
+ * @param {number} id_user - ID pemilik
+ * @param {number} id_category - ID kategori baru
+ * @param {number} jumlah - Jumlah nominal baru
+ * @param {string} deskripsi - Deskripsi baru
+ * @param {string} tanggal - Tanggal baru (YYYY-MM-DD)
+ * @returns {Promise<Object|null>} Data transaksi yang diupdate, atau null
+ */
 export const updateTransaksi = async (id_transaksi, id_user, id_category, jumlah, deskripsi, tanggal) => {
     const query = await pool.query(
         `UPDATE transaksi
@@ -46,6 +77,12 @@ export const updateTransaksi = async (id_transaksi, id_user, id_category, jumlah
     return query.rows[0] ?? null;
 };
 
+/**
+ * Soft-delete transaksi (set is_deleted = TRUE)
+ * @param {number} id_transaksi - ID transaksi
+ * @param {number} id_user - ID pemilik
+ * @returns {Promise<Object|null>} Data transaksi yang dihapus (deleted_at), atau null
+ */
 export const deleteTransaksi = async (id_transaksi, id_user) => {
     const query = await pool.query(
         `UPDATE transaksi

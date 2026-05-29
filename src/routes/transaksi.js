@@ -2,6 +2,11 @@ import express from "express";
 import { createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi } from "../controllers/transaksi.js";
 import { authenticate } from "../middleware/auth.js";
 
+/**
+ * Router untuk endpoint transaksi keuangan
+ * Semua endpoint memerlukan autentikasi token JWT
+ * @type {import("express").Router}
+ */
 const router = express.Router();
 
 router.post("/", authenticate, createTransaksi);
