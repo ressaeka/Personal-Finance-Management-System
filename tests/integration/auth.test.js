@@ -35,10 +35,10 @@ describe("Auth API Integration (Real Database)", () => {
 
             expect(res.status).toBe(201);
             expect(res.body.status).toBe("success");
-            expect(res.body.message).toBe("Register berhasil");
+            expect(res.body.message).toBe("Register Berhasil");
             expect(res.body.data.username).toBe("testuser");
             expect(res.body.data.email).toBe("testuser@example.com");
-            expect(res.body.data).toHaveProperty("id");
+            expect(res.body.data).toHaveProperty("id_user");
         });
 
         test("should reject duplicate email", async () => {
@@ -87,9 +87,9 @@ describe("Auth API Integration (Real Database)", () => {
 
             expect(res.status).toBe(200);
             expect(res.body.status).toBe("success");
-            expect(res.body.message).toBe("Login berhasil");
-            expect(res.body).toHaveProperty("token");
-            expect(res.body.data.username).toBe("testuser");
+            expect(res.body.message).toBe("Login Berhasil");
+            expect(res.body.data).toHaveProperty("token");
+            expect(res.body.data.user.username).toBe("testuser");
         });
 
         test("should reject wrong password", async () => {
@@ -119,7 +119,7 @@ describe("Auth API Integration (Real Database)", () => {
             const loginRes = await request(app)
                 .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "Test123!xyz" });
-            token = loginRes.body.token;
+            token = loginRes.body.data.token;
         });
 
         test("should return profile with valid token", async () => {
@@ -155,7 +155,7 @@ describe("Auth API Integration (Real Database)", () => {
             const loginRes = await request(app)
                 .post("/api/v1/auth/login")
                 .send({ username: "testuser", password: "Test123!xyz" });
-            token = loginRes.body.token;
+            token = loginRes.body.data.token;
         });
 
         test("should update profile successfully", async () => {
@@ -204,7 +204,7 @@ describe("Auth API Integration (Real Database)", () => {
 
             expect(res.status).toBe(200);
             expect(res.body.status).toBe("success");
-            expect(res.body.message).toBe("Logout berhasil");
+            expect(res.body.message).toBe("Logout Berhasil");
         });
     });
 });

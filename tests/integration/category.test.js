@@ -20,7 +20,7 @@ const registerAndLogin = async () => {
     const loginRes = await request(app)
         .post("/api/v1/auth/login")
         .send({ username: "cat_testuser", password: "Test123!xyz" });
-    token = loginRes.body.token;
+    token = loginRes.body.data.token;
     id_user = loginRes.body.data.id_user;
 };
 
@@ -154,7 +154,7 @@ describe("Category API Integration (Real Database)", () => {
             const loginRes2 = await request(app)
                 .post("/api/v1/auth/login")
                 .send({ username: "cat_testuser2", password: "Test123!xyz" });
-            const token2 = loginRes2.body.token;
+            const token2 = loginRes2.body.data.token;
 
             await request(app)
                 .post("/api/v1/category")

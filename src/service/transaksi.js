@@ -1,5 +1,6 @@
 import {createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi} from "../models/transaksi.js";
 import { getCategoryById } from "../models/category.js";
+import { AppError } from "../utils/appError.js";
 
 export const createTransaksiService = async (id_user, id_category, jumlah, deskripsi, tanggal) => {
   if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
@@ -16,9 +17,7 @@ export const createTransaksiService = async (id_user, id_category, jumlah, deskr
 
   const category = await getCategoryById(id_category, id_user);
   if (!category) {
-    const err = new Error("Category tidak ditemukan");
-    err.statusCode = 404;
-    throw err;
+    throw new AppError("Category tidak ditemukan", 404)
   }
 
   let finalJumlah;
@@ -75,9 +74,7 @@ export const getTransaksiByIdService = async (id_transaksi, id_user) => {
 
   const transaksi = await getTransaksiById(id_transaksi, id_user);
   if (!transaksi) {
-    const err = new Error("Transaksi tidak ditemukan");
-    err.statusCode = 404;
-    throw err;
+    throw new AppError("Transaksi tidak ditemukan", 404)
   }
 
   return transaksi;
@@ -102,16 +99,12 @@ export const updateTransaksiService = async (id_transaksi, id_user, id_category,
 
   const existing = await getTransaksiById(id_transaksi, id_user);
   if (!existing) {
-    const err = new Error("Transaksi tidak ditemukan");
-    err.statusCode = 404;
-    throw err;
+    throw new AppError("Transaksi tidak ditemukan", 404)
   }
 
   const category = await getCategoryById(id_category, id_user);
   if (!category) {
-    const err = new Error("Category tidak ditemukan");
-    err.statusCode = 404;
-    throw err;
+    throw new AppError("Category tidak ditemukan", 404)
   }
 
   let finalJumlah;
@@ -159,9 +152,7 @@ export const deleteTransaksiService = async (id_transaksi, id_user) => {
 
   const transaksi = await deleteTransaksi(id_transaksi, id_user);
   if (!transaksi) {
-    const err = new Error("Transaksi tidak ditemukan atau sudah dihapus");
-    err.statusCode = 404;
-    throw err;
+    throw new AppError("Transaksi tidak ditemukan atau sudah dihapus", 404)
   }
 
   return transaksi;

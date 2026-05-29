@@ -1,6 +1,7 @@
 import { createUsers, findUserByEmail, findUserByUsername, findUserById, updateUserById } from "../models/auth.js";
 import { generateToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
+import { AppError } from "../utils/appError.js";
 
 export const registerService = async (userData) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,16 +26,12 @@ export const registerService = async (userData) => {
 
     const existingEmail = await findUserByEmail(email);
     if (existingEmail) {
-        const err = new Error("Email sudah terdaftar");
-        err.statusCode = 409;
-        throw err;
+        throw new AppError("Email sudah terdaftar", 409)
     }
 
     const existingUser = await findUserByUsername(username);
     if (existingUser) {
-        const err = new Error("Username sudah terdaftar");
-        err.statusCode = 409;
-        throw err;
+        throw new AppError("Username sudah terdaftar", 409)
     }
 
     const hashedPassword = await hashPassword(password);
@@ -121,16 +118,12 @@ export const updateUserByIdService = async (id_user, username, email, password) 
 
     const existingEmail = await findUserByEmail(email);
     if (existingEmail && existingEmail.id_user !== Number(id_user)) {
-        const err = new Error("Email sudah terdaftar");
-        err.statusCode = 409;
-        throw err;
+        throw new AppError("Email sudah terdaftar", 409)
     }
 
     const existingUsername = await findUserByUsername(username);
     if (existingUsername && existingUsername.id_user !== Number(id_user)) {
-        const err = new Error("Username sudah terdaftar");
-        err.statusCode = 409;
-        throw err;
+        throw new AppError("Username sudah terdaftar", 409)
     }
 
     const user = await findUserById(id_user);

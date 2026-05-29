@@ -1,4 +1,5 @@
 import { createCategory, getAllCategory, getCategoryById, updateCategory,deleteCategory } from "../models/category.js";
+import { AppError } from "../utils/appError.js";
 
 export const categoryService = async (id_user, nama_category, tipe) => {
     if (!id_user) {
@@ -16,9 +17,7 @@ export const categoryService = async (id_user, nama_category, tipe) => {
     const existing = await getAllCategory(id_user);
     const duplicate = existing.find(c => c.nama_category.toLowerCase() === nama_category.toLowerCase());
     if (duplicate) {
-        const err = new Error("Nama category sudah ada");
-        err.statusCode = 409;
-        throw err;
+        throw new AppError("Nama category sudah ada", 409)
     }
 
     const newCategory = await createCategory(id_user, nama_category, tipe);
@@ -52,9 +51,7 @@ export const getCategoryByIdService = async (id_category, id_user) => {
     const category = await getCategoryById(id_category, id_user);
 
     if (!category) {
-        const err = new Error("Category tidak ditemukan");
-        err.statusCode = 404;
-        throw err;
+        throw new AppError("Category tidak ditemukan", 404)
     }
 
     return category;
@@ -80,9 +77,7 @@ export const updateCategoryService = async (id_category, id_user, nama_category,
     const existingCategory = await getCategoryById(id_category, id_user);
     
     if (!existingCategory) {
-        const err = new Error("Category tidak ditemukan");
-        err.statusCode = 404;
-        throw err;
+        throw new AppError("Category tidak ditemukan", 404)
     }
     
     const category = await updateCategory(id_category, id_user, nama_category, tipe);
@@ -107,9 +102,7 @@ export const deleteCategoryService = async (id_category, id_user) => {
     const category = await deleteCategory(id_category, id_user);
     
     if (!category) {
-        const err = new Error("Category tidak ditemukan atau sudah dihapus");
-        err.statusCode = 404;
-        throw err;
+        throw new AppError("Category tidak ditemukan atau sudah dihapus", 404)
     }
     
     return category;

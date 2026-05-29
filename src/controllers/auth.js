@@ -1,109 +1,59 @@
 import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
+import { successResponse } from "../utils/response.js"
+import { AppError } from "../utils/appError.js";
 
-export const register = async (req, res) => {
+
+export const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
         const result = await registerService({ username, email, password });
-
-        return res.status(201).json({
-            status: "success",
-            message: "Register berhasil",
-            data: {
-                id: result.id_user,
-                username: result.username,
-                email: result.email
-            }
-        });
+        return successResponse(res, result, "Register Berhasil", 201)
     } catch(err) {
-        return res.status(err.statusCode || 400).json({
-            status: "failed",
-            message: err.message
-        });
+        return next(err)
     }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { username, password } = req.body;
         const result = await loginService({ username, password });
 
-        return res.status(200).json({
-            status: "success",
-            message: "Login berhasil",
-            data: result.user,
-            token: result.token
-        });
+        return successResponse(res, result, "Login Berhasil", 200)
         
     } catch(err) {
-        return res.status(err.statusCode || 400).json({
-            status: "failed",
-            message: err.message
-        });
+        return next(err)
     }
-};
+}
 
-export const profile = async (req, res) => {
+export const profile = async (req, res, next) => {
     try {
         if (!req.user || !req.user.id_user) {
-            return res.status(401).json({
-                status: "failed",
-                message: "User tidak terautentikasi"
-            });
+            throw new AppError("User tidak terautentikasi", 401)
         }
 
         const { id_user } = req.user;
         const result = await getProfileService({ id_user });
 
-        return res.status(200).json({
-            status: "success",
-            message: "Berhasil mengambil data user",
-            data: result
-        });
+        return successResponse(res, result, "Berhasil mengambil data user", 200)
     } catch(err) {
-        return res.status(err.statusCode || 400).json({
-            status: "failed",
-            message: err.message
-        });
+        return next(err)
     }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
     try {
         const id_user = req.user.id_user;
         const { username, email, password } = req.body;
 
         const result = await updateUserByIdService(id_user, username, email, password);
 
-        return res.status(200).json({
-            status: "success",
-            message: "Berhasil memperbarui data user",
-            data: result
-        });
+        return successResponse(res, result, "Berhasil memperbarui data user")
     } catch (err) {
-        return res.status(err.statusCode || 400).json({
-            status: "failed",
-            message: err.message
-        });
+        return next(err)
     }
 };
 
-export const logout = async (req, res) => {
-    try {
-        if (req.user) {
-            console.log(`User ${req.user.username || req.user.id_user} logout`);
-        }
+export const logout = async (req, res, next) => {
+    return successResponse(res, null, "Logout Berhasil", 200)
+}
 
-        return res.status(200).json({
-            status: "success",
-            message: "Logout berhasil",
-            data: {
-                instruction: "Silakan hapus token dari penyimpanan client"
-            }
-        });
-    } catch(err) {
-        return res.status(err.statusCode || 400).json({
-            status: "failed",
-            message: err.message
-        });
-    }
-};
