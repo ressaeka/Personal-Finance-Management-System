@@ -1,4 +1,4 @@
-import app from "./app.js";
+import app from './app.js';
 
 /**
  * Port yang digunakan oleh server aplikasi.
@@ -12,11 +12,11 @@ const port = process.env.PORT || 3000;
  * Menentukan host berdasarkan status environment variable HOST.
  * @type {string}
  */
-const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 /**
  * Menjalankan server Express untuk mulai mendengarkan request masuk
  */
 app.listen(port, host, () => {
-    console.log(`Server is running http://${host}:${port}`)
-})
+  console.log(`Server is running http://${host}:${port}`);
+});

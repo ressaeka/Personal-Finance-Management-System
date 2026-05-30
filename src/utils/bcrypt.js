@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 // --- CONFIGURATION CONSTANTS ---
 const SALT_ROUNDS = 10;
@@ -9,7 +9,7 @@ const SALT_ROUNDS = 10;
  * @returns {Promise<string>} String password yang sudah di-hash dan siap disimpan ke database
  */
 export const hashPassword = async (password) => {
-    return await bcrypt.hash(password, SALT_ROUNDS);
+  return await bcrypt.hash(password, SALT_ROUNDS);
 };
 
 /**
@@ -19,5 +19,5 @@ export const hashPassword = async (password) => {
  * @returns {Promise<boolean>} Mengembalikan true jika password cocok, dan false jika salah
  */
 export const comparePassword = async (plainPassword, hashedPassword) => {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+  return await bcrypt.compare(plainPassword, hashedPassword);
 };

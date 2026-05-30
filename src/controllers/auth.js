@@ -1,6 +1,10 @@
-import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
-import { successResponse } from "../utils/response.js";
-import { AppError } from "../utils/appError.js";
+import {
+  registerService,
+  loginService,
+  getProfileService,
+  updateUserByIdService,
+} from '../service/auth.js';
+import { successResponse } from '../utils/response.js';
 
 /**
  * Controller untuk menangani registrasi user baru
@@ -9,14 +13,14 @@ import { AppError } from "../utils/appError.js";
  * @param {Object} next - Express next function
  */
 export const register = async (req, res, next) => {
-    try {
-        const { username, email, password } = req.body;
-        const result = await registerService({ username, email, password });
-        
-        return successResponse(res, result, "Register Berhasil", 201);
-    } catch (err) {
-        return next(err);
-    }
+  try {
+    const { username, email, password } = req.body;
+    const result = await registerService({ username, email, password });
+
+    return successResponse(res, result, 'Register Berhasil', 201);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 /**
@@ -26,14 +30,14 @@ export const register = async (req, res, next) => {
  * @param {Object} next - Express next function
  */
 export const login = async (req, res, next) => {
-    try {
-        const { username, password } = req.body;
-        const result = await loginService({ username, password });
+  try {
+    const { username, password } = req.body;
+    const result = await loginService({ username, password });
 
-        return successResponse(res, result, "Login Berhasil", 200);
-    } catch (err) {
-        return next(err);
-    }
+    return successResponse(res, result, 'Login Berhasil', 200);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 /**
@@ -43,14 +47,14 @@ export const login = async (req, res, next) => {
  * @param {Object} next - Express next function
  */
 export const profile = async (req, res, next) => {
-    try {
-        const { id_user } = req.user;
-        const result = await getProfileService({ id_user });
+  try {
+    const { id_user } = req.user;
+    const result = await getProfileService({ id_user });
 
-        return successResponse(res, result, "Berhasil mengambil data user", 200);
-    } catch (err) {
-        return next(err);
-    }
+    return successResponse(res, result, 'Berhasil mengambil data user', 200);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 /**
@@ -60,16 +64,21 @@ export const profile = async (req, res, next) => {
  * @param {Object} next - Express next function
  */
 export const updateUser = async (req, res, next) => {
-    try {
-        const id_user = req.user.id_user;
-        const { username, email, password } = req.body;
+  try {
+    const id_user = req.user.id_user;
+    const { username, email, password } = req.body;
 
-        const result = await updateUserByIdService(id_user, username, email, password);
+    const result = await updateUserByIdService(
+      id_user,
+      username,
+      email,
+      password,
+    );
 
-        return successResponse(res, result, "Berhasil memperbarui data user", 200);
-    } catch (err) {
-        return next(err);
-    }
+    return successResponse(res, result, 'Berhasil memperbarui data user', 200);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 /**
@@ -78,8 +87,8 @@ export const updateUser = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Object} next - Express next function
  */
-export const logout = async (req, res, next) => {
-    // Karena menggunakan Stateless JWT, logout cukup memberikan respon sukses ke client 
-    // agar client menghapus tokennya di LocalStorage/Cookies.
-    return successResponse(res, null, "Logout Berhasil", 200);
+export const logout = async (req, res, _next) => {
+  // Karena menggunakan Stateless JWT, logout cukup memberikan respon sukses ke client
+  // agar client menghapus tokennya di LocalStorage/Cookies.
+  return successResponse(res, null, 'Logout Berhasil', 200);
 };

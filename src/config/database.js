@@ -1,5 +1,5 @@
-import pkg from "pg";
-import dotenv from "dotenv";
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -15,9 +15,7 @@ const pool = new Pool({
   user: process.env.DB_USER,
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
   database:
-    process.env.NODE_ENV === "test"
-      ? process.env.DB_TEST
-      : process.env.DB_NAME,
+    process.env.NODE_ENV === 'test' ? process.env.DB_TEST : process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   max: 20,
   idleTimeoutMillis: 30000,
@@ -25,8 +23,8 @@ const pool = new Pool({
 });
 
 // Menangani error pada pool koneksi secara global agar process tidak crash
-pool.on("error", (err) => {
-  console.error("Unexpected database pool error:", err.message);
+pool.on('error', (err) => {
+  console.error('Unexpected database pool error:', err.message);
 });
 
 export default pool;

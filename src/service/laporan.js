@@ -1,5 +1,11 @@
-import { upsertLaporan, getAllLaporan, getLaporanByPeriode, generateLaporanBulanan, rekapOtomatis, deleteLaporan } from "../models/laporan.js";
-import { AppError } from "../utils/appError.js";
+import {
+  getAllLaporan,
+  getLaporanByPeriode,
+  generateLaporanBulanan,
+  rekapOtomatis,
+  deleteLaporan,
+} from '../models/laporan.js';
+import { AppError } from '../utils/appError.js';
 
 // --- REUSABLE REGEX CONSTANTS ---
 const PERIODE_REGEX = /^\d{4}-\d{2}$/;
@@ -13,33 +19,33 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
  * @returns {Object} Data laporan keuangan bulanan yang berhasil di-generate
  */
 export const generateLaporanService = async (id_user, tahun, bulan) => {
-    // Validasi Format User (401 Unauthorized)
-    if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-        throw new AppError("User tidak valid/terautentikasi", 401);
-    }
+  // Validasi Format User (401 Unauthorized)
+  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
+    throw new AppError('User tidak valid/terautentikasi', 401);
+  }
 
-    // Validasi Kelengkapan Input Periode (400 Bad Request)
-    if (!tahun || !bulan) {
-        throw new AppError("Tahun dan bulan harus diisi", 400);
-    }
+  // Validasi Kelengkapan Input Periode (400 Bad Request)
+  if (!tahun || !bulan) {
+    throw new AppError('Tahun dan bulan harus diisi', 400);
+  }
 
-    const tahunNum = parseInt(tahun);
-    const bulanNum = parseInt(bulan);
+  const tahunNum = parseInt(tahun);
+  const bulanNum = parseInt(bulan);
 
-    if (isNaN(tahunNum) || tahunNum < 2000 || tahunNum > 2100) {
-        throw new AppError("Tahun tidak valid (Rentang valid: 2000-2100)", 400);
-    }
+  if (isNaN(tahunNum) || tahunNum < 2000 || tahunNum > 2100) {
+    throw new AppError('Tahun tidak valid (Rentang valid: 2000-2100)', 400);
+  }
 
-    if (isNaN(bulanNum) || bulanNum < 1 || bulanNum > 12) {
-        throw new AppError("Bulan tidak valid (Rentang valid: 1-12)", 400);
-    }
+  if (isNaN(bulanNum) || bulanNum < 1 || bulanNum > 12) {
+    throw new AppError('Bulan tidak valid (Rentang valid: 1-12)', 400);
+  }
 
-    const laporan = await generateLaporanBulanan(id_user, tahunNum, bulanNum);
-    if (!laporan) {
-        throw new AppError("Internal Server Error", 500); // 500 Internal Server Error
-    }
+  const laporan = await generateLaporanBulanan(id_user, tahunNum, bulanNum);
+  if (!laporan) {
+    throw new AppError('Internal Server Error', 500); // 500 Internal Server Error
+  }
 
-    return laporan;
+  return laporan;
 };
 
 /**
@@ -48,11 +54,11 @@ export const generateLaporanService = async (id_user, tahun, bulan) => {
  * @returns {Array<Object>} Daftar riwayat seluruh laporan user
  */
 export const getAllLaporanService = async (id_user) => {
-    if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-        throw new AppError("User tidak valid/terautentikasi", 401);
-    }
+  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
+    throw new AppError('User tidak valid/terautentikasi', 401);
+  }
 
-    return await getAllLaporan(id_user);
+  return await getAllLaporan(id_user);
 };
 
 /**
@@ -62,24 +68,24 @@ export const getAllLaporanService = async (id_user) => {
  * @returns {Object} Data detail laporan pada periode tersebut
  */
 export const getLaporanByPeriodeService = async (id_user, periode) => {
-    if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-        throw new AppError("User tidak valid/terautentikasi", 401);
-    }
+  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
+    throw new AppError('User tidak valid/terautentikasi', 401);
+  }
 
-    if (!periode) {
-        throw new AppError("Periode harus diisi", 400);
-    }
+  if (!periode) {
+    throw new AppError('Periode harus diisi', 400);
+  }
 
-    if (!PERIODE_REGEX.test(periode)) {
-        throw new AppError("Format periode tidak valid (YYYY-MM)", 400);
-    }
+  if (!PERIODE_REGEX.test(periode)) {
+    throw new AppError('Format periode tidak valid (YYYY-MM)', 400);
+  }
 
-    const laporan = await getLaporanByPeriode(id_user, periode);
-    if (!laporan) {
-        throw new AppError("Laporan tidak ditemukan", 404); // 404 Not Found
-    }
+  const laporan = await getLaporanByPeriode(id_user, periode);
+  if (!laporan) {
+    throw new AppError('Laporan tidak ditemukan', 404); // 404 Not Found
+  }
 
-    return laporan;
+  return laporan;
 };
 
 /**
@@ -89,20 +95,23 @@ export const getLaporanByPeriodeService = async (id_user, periode) => {
  * @returns {Object} Data laporan yang berhasil diperbarui nilainya
  */
 export const rekapOtomatisService = async (id_user, tanggal) => {
-    if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-        throw new AppError("User tidak valid/terautentikasi", 401);
-    }
+  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
+    throw new AppError('User tidak valid/terautentikasi', 401);
+  }
 
-    if (!tanggal) {
-        throw new AppError("Tanggal harus diisi", 400);
-    }
+  if (!tanggal) {
+    throw new AppError('Tanggal harus diisi', 400);
+  }
 
-    if (!DATE_REGEX.test(tanggal) || isNaN(new Date(tanggal + "T00:00:00").getTime())) {
-        throw new AppError("Format tanggal tidak valid (YYYY-MM-DD)", 400);
-    }
+  if (
+    !DATE_REGEX.test(tanggal) ||
+    isNaN(new Date(tanggal + 'T00:00:00').getTime())
+  ) {
+    throw new AppError('Format tanggal tidak valid (YYYY-MM-DD)', 400);
+  }
 
-    const updated = await rekapOtomatis(id_user, tanggal);
-    return updated;
+  const updated = await rekapOtomatis(id_user, tanggal);
+  return updated;
 };
 
 /**
@@ -112,18 +121,22 @@ export const rekapOtomatisService = async (id_user, tanggal) => {
  * @returns {Object} Data laporan yang berhasil dihapus sebagai bukti konfirmasi
  */
 export const deleteLaporanService = async (id_laporan, id_user) => {
-    if (!id_laporan || !Number.isInteger(Number(id_laporan)) || Number(id_laporan) <= 0) {
-        throw new AppError("ID laporan tidak valid", 400);
-    }
+  if (
+    !id_laporan ||
+    !Number.isInteger(Number(id_laporan)) ||
+    Number(id_laporan) <= 0
+  ) {
+    throw new AppError('ID laporan tidak valid', 400);
+  }
 
-    if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-        throw new AppError("User tidak valid/terautentikasi", 401);
-    }
+  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
+    throw new AppError('User tidak valid/terautentikasi', 401);
+  }
 
-    const laporan = await deleteLaporan(id_laporan, id_user);
-    if (!laporan) {
-        throw new AppError("Laporan tidak ditemukan", 404); // 404 Not Found
-    }
+  const laporan = await deleteLaporan(id_laporan, id_user);
+  if (!laporan) {
+    throw new AppError('Laporan tidak ditemukan', 404); // 404 Not Found
+  }
 
-    return laporan;
+  return laporan;
 };
