@@ -1,10 +1,10 @@
 import express from "express";
-import { category, getAllCategory, getCategoryById, updateCategory, deleteCategory  } from "../controllers/category.js";
+import { createCategory, getAllCategory, getCategoryById, updateCategory, deleteCategory  } from "../controllers/category.js";
 import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router()
 
-router.post("/", authenticate, category )
+router.post("/", authenticate, createCategory)
 router.get("/",authenticate, getAllCategory)
 router.get("/:id_category", authenticate, getCategoryById)
 router.put("/:id_category", authenticate, updateCategory  )

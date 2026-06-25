@@ -1,116 +1,86 @@
-import { createCategory, getAllCategory, getCategoryById, updateCategory,deleteCategory } from "../models/category.js";
+import { createCategory, getAllCategory, getCategoryById, updateCategory, deleteCategory } from "../models/category.js";
+import { AppError } from "../utils/appError.js";
+import {
+  validateCreateCategory,
+  validateGetCategoryById,
+  validateUpdateCategory,
+  validateDeleteCategory,
+} from "../validators/category.js";
 
 export const categoryService = async (id_user, nama_category, tipe) => {
-    if (!id_user) {
-        throw new Error("User tidak ditemukan");
-    }
+  const validatedData = validateCreateCategory(id_user, nama_category, tipe);
 
-    if (!nama_category || nama_category.trim().length < 3) {
-        throw new Error("Category harus diisi dan minimal 3 karakter");
-    }
+  const existing = await getAllCategory(validatedData.id_user);
+  const duplicate = existing.find(
+    (c) => c.nama_category.toLowerCase() === validatedData.nama_category.toLowerCase(),
+  );
+  if (duplicate) {
+    throw new AppError("Nama category sudah ada", 409);
+  }
 
-    if (!tipe || (tipe !== "pemasukan" && tipe !== "pengeluaran")) {
-        throw new Error("Tipe harus diisi dan harus 'pemasukan' atau 'pengeluaran'");
-    }
+  const newCategory = await createCategory(
+    validatedData.id_user,
+    validatedData.nama_category,
+    validatedData.tipe,
+  );
 
-    const existing = await getAllCategory(id_user);
-    const duplicate = existing.find(c => c.nama_category.toLowerCase() === nama_category.toLowerCase());
-    if (duplicate) {
-        const err = new Error("Nama category sudah ada");
-        err.statusCode = 409;
-        throw err;
-    }
+  if (!newCategory) {
+    throw new AppError("Category gagal dibuat", 500);
+  }
 
-    const newCategory = await createCategory(id_user, nama_category, tipe);
-
-    if (!newCategory) {
-        throw new Error("Category gagal dibuat");
-    }
-
-    return newCategory;
+  return newCategory;
 };
 
 export const getAllCategoryService = async (id_user) => {
-    if (!id_user) {
-        throw new Error("User tidak ditemukan");
-    }
+  if (!id_user) {
+    throw new AppError("User tidak ditemukan", 401);
+  }
 
-    const category = await getAllCategory(id_user);
-    return category;
-}
-
+  const category = await getAllCategory(id_user);
+  return category;
+};
 
 export const getCategoryByIdService = async (id_category, id_user) => {
-    if (!id_category || !Number.isInteger(Number(id_category)) || Number(id_category) <= 0) {
-        throw new Error("ID category tidak valid");
-    }
+  const validatedData = validateGetCategoryById(id_category, id_user);
+  const category = await getCategoryById(validatedData.id_category, validatedData.id_user);
 
-    if (!id_user) {
-        throw new Error("User tidak ditemukan");
-    }
+  if (!category) {
+    throw new AppError("Category tidak ditemukan", 404);
+  }
 
-    const category = await getCategoryById(id_category, id_user);
-
-    if (!category) {
-        const err = new Error("Category tidak ditemukan");
-        err.statusCode = 404;
-        throw err;
-    }
-
-    return category;
+  return category;
 };
 
 export const updateCategoryService = async (id_category, id_user, nama_category, tipe) => {
-    if (!id_category || !Number.isInteger(Number(id_category)) || Number(id_category) <= 0) {
-        throw new Error("ID category tidak valid");
-    }
-     
-    if (!id_user) {
-        throw new Error("User tidak ditemukan");
-    }
-    
-    if (!nama_category || nama_category.trim().length < 3) {
-        throw new Error("Nama category minimal 3 karakter");
-    }
-    
-    if (!tipe || (tipe !== "pemasukan" && tipe !== "pengeluaran")) {
-        throw new Error("Tipe harus 'pemasukan' atau 'pengeluaran'");
-    }
-    
-    const existingCategory = await getCategoryById(id_category, id_user);
-    
-    if (!existingCategory) {
-        const err = new Error("Category tidak ditemukan");
-        err.statusCode = 404;
-        throw err;
-    }
-    
-    const category = await updateCategory(id_category, id_user, nama_category, tipe);
-    
-    if (!category) {
-        throw new Error("Category gagal diupdate");
-    }
-    
-    return category;
+  const validatedData = validateUpdateCategory(id_category, id_user, nama_category, tipe);
+
+  const existingCategory = await getCategoryById(validatedData.id_category, validatedData.id_user);
+  if (!existingCategory) {
+    throw new AppError("Category tidak ditemukan", 404);
+  }
+
+  const category = await updateCategory(
+    validatedData.id_category,
+    validatedData.id_user,
+    validatedData.nama_category || existingCategory.nama_category,
+    validatedData.tipe || existingCategory.tipe,
+  );
+
+  if (!category) {
+    throw new AppError("Category gagal diupdate", 500);
+  }
+
+  return category;
 };
 
-
 export const deleteCategoryService = async (id_category, id_user) => {
-    if (!id_category || !Number.isInteger(Number(id_category)) || Number(id_category) <= 0) {
-        throw new Error("ID category tidak valid");
-    }
-    
-    if (!id_user) {
-        throw new Error("User tidak ditemukan");
-    }
-    
-    const category = await deleteCategory(id_category, id_user);
-    
-    if (!category) {
-        const err = new Error("Category tidak ditemukan atau sudah dihapus");
-        err.statusCode = 404;
-        throw err;
-    }
-    
-    return category;
+  const validatedData = validateDeleteCategory(id_category, id_user);
+
+  const category = await deleteCategory(validatedData.id_category, validatedData.id_user);
+
+  if (!category) {
+    throw new AppError("Category tidak ditemukan atau sudah dihapus", 404);
+  }
+
+  return category;
 };
