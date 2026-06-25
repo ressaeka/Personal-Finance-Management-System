@@ -32,19 +32,19 @@ describe("AUTH SERVICE TESTS", () => {
             test("should throw error if username is missing", async () => {
                 const userData = { email: "test@example.com", password: "Test123!xyz" };
                 
-                await expect(registerService(userData)).rejects.toThrow("Username, email dan password wajib diisi");
+                await expect(registerService(userData)).rejects.toThrow("Username harus diisi dan minimal 3 karakter");
             });
             
             test("should throw error if email is missing", async () => {
                 const userData = { username: "testuser", password: "Test123!xyz" };
                 
-                await expect(registerService(userData)).rejects.toThrow("Username, email dan password wajib diisi");
+                await expect(registerService(userData)).rejects.toThrow("Format email tidak valid");
             });
             
             test("should throw error if password is missing", async () => {
                 const userData = { username: "testuser", email: "test@example.com" };
                 
-                await expect(registerService(userData)).rejects.toThrow("Username, email dan password wajib diisi");
+                await expect(registerService(userData)).rejects.toThrow("Password wajib diisi");
             });
             
             test("should throw error if username less than 3 characters", async () => {
@@ -54,7 +54,7 @@ describe("AUTH SERVICE TESTS", () => {
                     password: "Test123!xyz"
                 };
                 
-                await expect(registerService(userData)).rejects.toThrow("Username minimal 3 karakter");
+                await expect(registerService(userData)).rejects.toThrow("Username harus diisi dan minimal 3 karakter");
             });
             
             test("should throw error if email format is invalid", async () => {
@@ -74,7 +74,7 @@ describe("AUTH SERVICE TESTS", () => {
                     password: "weak"
                 };
                 
-                await expect(registerService(userData)).rejects.toThrow("Password harus minimal");
+                await expect(registerService(userData)).rejects.toThrow("Password minimal 8 karakter");
             });
         });
         
@@ -137,11 +137,11 @@ describe("AUTH SERVICE TESTS", () => {
     describe("LOGIN SERVICE", () => {
         describe("Validation Tests", () => {
             test("should throw error if username is missing", async () => {
-                await expect(loginService({ password: "Test123" })).rejects.toThrow("Username dan Password wajib diisi");
+                await expect(loginService({ password: "Test123" })).rejects.toThrow("Username wajib diisi");
             });
             
             test("should throw error if password is missing", async () => {
-                await expect(loginService({ username: "testuser" })).rejects.toThrow("Username dan Password wajib diisi");
+                await expect(loginService({ username: "testuser" })).rejects.toThrow("Password wajib diisi");
             });
         });
         
@@ -239,17 +239,17 @@ describe("AUTH SERVICE TESTS", () => {
         describe("Validation Tests", () => {
             test("should throw error if id_user is missing", async () => {
                 await expect(updateUserByIdService(null, "user", "a@b.com", "Test123!x"))
-                    .rejects.toThrow("Id user tidak valid");
+                    .rejects.toThrow("ID user tidak valid");
             });
 
             test("should throw error if id_user is not a number", async () => {
                 await expect(updateUserByIdService("abc", "user", "a@b.com", "Test123!x"))
-                    .rejects.toThrow("Id user tidak valid");
+                    .rejects.toThrow("ID user tidak valid");
             });
 
             test("should throw error if username too short", async () => {
                 await expect(updateUserByIdService(1, "ab", "a@b.com", "Test123!x"))
-                    .rejects.toThrow("Username harus diisi dan minimal 3 karakter");
+                    .rejects.toThrow("Username harus minimal 3 karakter");
             });
 
             test("should throw error if email is invalid", async () => {
@@ -259,7 +259,7 @@ describe("AUTH SERVICE TESTS", () => {
 
             test("should throw error if password is weak", async () => {
                 await expect(updateUserByIdService(1, "user", "a@b.com", "weak"))
-                    .rejects.toThrow("Password harus minimal");
+                    .rejects.toThrow("Password minimal 8 karakter");
             });
         });
 

@@ -23,23 +23,23 @@ describe("CATEGORY SERVICE TESTS", () => {
         });
 
         test("should throw error if nama_category is empty", async () => {
-            await expect(categoryService(1, "", "pengeluaran"))
-                .rejects.toThrow("Category harus diisi dan minimal 3 karakter");
+                await expect(categoryService(1, "", "pengeluaran"))
+                .rejects.toThrow("Nama category harus diisi dan minimal 3 karakter");
         });
 
         test("should throw error if nama_category is less than 3 characters", async () => {
-            await expect(categoryService(1, "ab", "pengeluaran"))
-                .rejects.toThrow("Category harus diisi dan minimal 3 karakter");
+                await expect(categoryService(1, "ab", "pengeluaran"))
+                .rejects.toThrow("Nama category harus diisi dan minimal 3 karakter");
         });
 
         test("should throw error if tipe is empty", async () => {
             await expect(categoryService(1, "Makanan", ""))
-                .rejects.toThrow("Tipe harus diisi dan harus 'pemasukan' atau 'pengeluaran'");
+                .rejects.toThrow("Tipe harus 'pemasukan' atau 'pengeluaran'");
         });
 
         test("should throw error if tipe is invalid", async () => {
             await expect(categoryService(1, "Makanan", "investasi"))
-                .rejects.toThrow("Tipe harus diisi dan harus 'pemasukan' atau 'pengeluaran'");
+                .rejects.toThrow("Tipe harus 'pemasukan' atau 'pengeluaran'");
         });
     });
 

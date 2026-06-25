@@ -21,10 +21,10 @@ export const login = async (req, res, next) => {
     const { username, password } = req.body;
     const result = await loginService({ username, password });
 
-    return succesResponse(res,{
+    return successResponse(res,{
      user: result.user,
      token: result.token
-    }, 'success', 200 );
+    }, 'Login berhasil', 200 );
 
   } catch (err) {
     return next(err);

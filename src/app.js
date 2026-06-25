@@ -5,9 +5,6 @@ import category from "./routes/category.js";
 import transaksi from "./routes/transaksi.js";
 import laporan from "./routes/laporan.js";
 
-// Menginisialisasi koneksi database saat aplikasi pertama kali dinyalakan
-import "./config/database.js";
-
 // Memuat variabel lingkungan dari file .env
 dotenv.config();
 
