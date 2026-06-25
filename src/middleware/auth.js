@@ -1,7 +1,8 @@
 import { verifyToken } from "../utils/jwt.js";
+import { isBlacklisted } from "../models/tokenBlacklist.js";
 import { AppError } from "../utils/appError.js";
 
-export const authenticate = (req, res, next) => {
+export const authenticate = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
 
@@ -24,6 +25,13 @@ export const authenticate = (req, res, next) => {
     }
 
     const decoded = verifyToken(token);
+
+    if (decoded.jti) {
+      const blacklisted = await isBlacklisted(decoded.jti);
+      if (blacklisted) {
+        throw new AppError("Token sudah tidak valid", 401);
+      }
+    }
 
     req.user = decoded;
 

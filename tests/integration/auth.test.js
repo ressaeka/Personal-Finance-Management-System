@@ -199,12 +199,43 @@ describe("Auth API Integration (Real Database)", () => {
   });
 
   describe("POST /auth/logout", () => {
+    let token;
+
+    beforeEach(async () => {
+      await registerUser();
+      const loginRes = await request(app)
+        .post("/api/v1/auth/login")
+        .send({ username: "testuser", password: "Test123!xyz" });
+      token = loginRes.body.data.token;
+    });
+
     test("should logout successfully", async () => {
-      const res = await request(app).post("/api/v1/auth/logout");
+      const res = await request(app)
+        .post("/api/v1/auth/logout")
+        .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(200);
       expect(res.body.status).toBe("success");
       expect(res.body.message).toBe("Logout berhasil");
+    });
+
+    test("should return 401 without token", async () => {
+      const res = await request(app).post("/api/v1/auth/logout");
+
+      expect(res.status).toBe(401);
+    });
+
+    test("should reject blacklisted token", async () => {
+      await request(app)
+        .post("/api/v1/auth/logout")
+        .set("Authorization", `Bearer ${token}`);
+
+      const res = await request(app)
+        .get("/api/v1/auth/profile")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(401);
+      expect(res.body.status).toBe("failed");
     });
   });
 });

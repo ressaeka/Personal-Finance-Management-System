@@ -1,50 +1,58 @@
-import { AppError } from '../utils/appError.js';
+import z from 'zod';
+import { validate } from '../utils/validate.js';
+
+const TIPE_ENUM = ['pemasukan', 'pengeluaran'];
+
+const userIdSchema = z.coerce.number({ message: 'User tidak ditemukan' })
+  .int('User tidak ditemukan')
+  .positive('User tidak ditemukan');
+
+const categoryIdSchema = z.coerce.number({ message: 'ID category tidak valid' })
+  .int('ID category tidak valid')
+  .positive('ID category tidak valid');
+
+const categoryDataSchema = z.object({
+  nama_category: z.string()
+    .min(3, 'Nama category harus diisi dan minimal 3 karakter')
+    .transform(v => v.trim()),
+  tipe: z.string().refine(v => TIPE_ENUM.includes(v), { message: "Tipe harus 'pemasukan' atau 'pengeluaran'" }),
+});
+
+const categoryDataPartialSchema = z.object({
+  nama_category: z.string()
+    .min(3, 'Nama category minimal 3 karakter')
+    .transform(v => v.trim()),
+  tipe: z.string().refine(v => TIPE_ENUM.includes(v), { message: "Tipe harus 'pemasukan' atau 'pengeluaran'" }),
+});
 
 export const validateUserId = (id_user) => {
-  if (!id_user || !Number.isInteger(Number(id_user)) || Number(id_user) <= 0) {
-    throw new AppError('User tidak ditemukan/terautentikasi', 401);
-  }
-  return Number(id_user);
+  const result = validate(userIdSchema, id_user);
+  return Number(result);
 };
 
 export const validateCategoryId = (id_category) => {
-  if (
-    !id_category ||
-    !Number.isInteger(Number(id_category)) ||
-    Number(id_category) <= 0
-  ) {
-    throw new AppError('ID category tidak valid', 400);
-  }
-  return Number(id_category);
+  const result = validate(categoryIdSchema, id_category);
+  return Number(result);
 };
 
 export const validateCategoryData = (nama_category, tipe, isRequired = true) => {
   if (isRequired) {
-    if (!nama_category || nama_category.trim().length < 3) {
-      throw new AppError('Nama category harus diisi dan minimal 3 karakter', 400);
-    }
-
-    if (!tipe || (tipe !== 'pemasukan' && tipe !== 'pengeluaran')) {
-      throw new AppError("Tipe harus 'pemasukan' atau 'pengeluaran'", 400);
-    }
-  } else {
-    if (nama_category !== undefined && nama_category !== null) {
-      if (typeof nama_category !== 'string' || nama_category.trim().length < 3) {
-        throw new AppError('Nama category minimal 3 karakter', 400);
-      }
-    }
-
-    if (tipe !== undefined && tipe !== null) {
-      if (tipe !== 'pemasukan' && tipe !== 'pengeluaran') {
-        throw new AppError("Tipe harus 'pemasukan' atau 'pengeluaran'", 400);
-      }
-    }
+    return validate(categoryDataSchema, { nama_category, tipe });
   }
 
-  return {
-    nama_category: nama_category ? nama_category.trim() : undefined,
-    tipe,
-  };
+  const data = {};
+  if (nama_category !== undefined && nama_category !== null) {
+    data.nama_category = nama_category;
+  }
+  if (tipe !== undefined && tipe !== null) {
+    data.tipe = tipe;
+  }
+
+  if (Object.keys(data).length === 0) {
+    return {};
+  }
+
+  return validate(categoryDataPartialSchema, data);
 };
 
 export const validateCreateCategory = (id_user, nama_category, tipe) => {

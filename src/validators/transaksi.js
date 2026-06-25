@@ -1,38 +1,35 @@
+import z from 'zod';
 import { AppError } from '../utils/appError.js';
+import { validate } from '../utils/validate.js';
+
+const TANGGAL_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export const validateId = (id, fieldName = 'ID') => {
-  if (!id || !Number.isInteger(Number(id)) || Number(id) <= 0) {
-    throw new AppError(`${fieldName} tidak valid`, 400);
-  }
-  return Number(id);
+  const schema = z.coerce.number({ message: `${fieldName} tidak valid` })
+    .int(`${fieldName} tidak valid`)
+    .positive(`${fieldName} tidak valid`);
+  return validate(schema, id);
 };
 
 export const validateJumlah = (jumlah) => {
-  const jumlahAngka = Number(jumlah);
-  if (jumlah === undefined || jumlah === null || isNaN(jumlahAngka) || jumlahAngka <= 0) {
-    throw new AppError('Jumlah harus berupa angka positif', 400);
-  }
-  return jumlahAngka;
+  const schema = z.coerce.number({ message: 'Jumlah harus berupa angka positif' }).positive('Jumlah harus berupa angka positif');
+  return validate(schema, jumlah);
 };
 
 export const validateDeskripsi = (deskripsi) => {
-  if (!deskripsi || deskripsi.trim().length < 3) {
+  if (!deskripsi) {
     throw new AppError('Deskripsi harus diisi dan minimal 3 karakter', 400);
   }
-  return deskripsi.trim();
+  const schema = z.string().min(3, 'Deskripsi harus diisi dan minimal 3 karakter');
+  return validate(schema, deskripsi).trim();
 };
 
 export const validateTanggal = (tanggal) => {
   if (!tanggal) {
     return null;
   }
-
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!regex.test(tanggal) || isNaN(new Date(tanggal + 'T00:00:00').getTime())) {
-    throw new AppError('Format tanggal tidak valid (YYYY-MM-DD)', 400);
-  }
-
-  return tanggal;
+  const schema = z.string().regex(TANGGAL_REGEX, 'Format tanggal tidak valid (YYYY-MM-DD)');
+  return validate(schema, tanggal);
 };
 
 export const validateUser = async (findUserById, id_user) => {

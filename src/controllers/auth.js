@@ -1,5 +1,6 @@
 import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
-import { successResponse, errorResponse } from "../utils/response.js";
+import { addToBlacklist } from "../models/tokenBlacklist.js";
+import { successResponse } from "../utils/response.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -21,10 +22,10 @@ export const login = async (req, res, next) => {
     const { username, password } = req.body;
     const result = await loginService({ username, password });
 
-    return successResponse(res,{
+    return successResponse(res, {
      user: result.user,
      token: result.token
-    }, 'Login berhasil', 200 );
+    }, 'Login berhasil', 200);
 
   } catch (err) {
     return next(err);
@@ -61,9 +62,9 @@ export const updateUser = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    return successResponse(res, {
-      instruction: "Silakan hapus token dari penyimpanan client",
-    }, "Logout berhasil");
+    await addToBlacklist(req.user.jti);
+
+    return successResponse(res, null, "Logout berhasil");
   } catch (err) {
     return next(err);
   }
