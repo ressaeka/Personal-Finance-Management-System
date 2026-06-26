@@ -1,8 +1,4 @@
-import {
-  getDashboardStats,
-  getMonthlyReport,
-  getCategoryReportCurrentMonth,
-} from "../models/laporan.js";
+import { getDashboardStats, getMonthlyReport, getCategoryReportCurrentMonth } from "../models/laporan.js";
 import {
   validateDashboardStats,
   validateMonthlyReport,

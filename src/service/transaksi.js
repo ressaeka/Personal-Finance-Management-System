@@ -2,24 +2,10 @@ import { createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, de
 import { getCategoryById } from "../models/category.js";
 import { findUserById } from "../models/auth.js";
 import { AppError } from "../utils/appError.js";
-import {
-  validateCreateTransaksi,
-  validateGetTransaksiById,
-  validateGetAllTransaksi,
-  validateUpdateTransaksi,
-  validateDeleteTransaksi,
-} from "../validators/transaksi.js";
+import { validateCreateTransaksi, validateGetTransaksiById, validateGetAllTransaksi, validateUpdateTransaksi, validateDeleteTransaksi } from "../validators/transaksi.js";
 
 export const createTransaksiService = async (id_user, id_category, jumlah, deskripsi, tanggal) => {
-  const validatedData = await validateCreateTransaksi(
-    findUserById,
-    getCategoryById,
-    id_user,
-    id_category,
-    jumlah,
-    deskripsi,
-    tanggal,
-  );
+  const validatedData = await validateCreateTransaksi( findUserById, getCategoryById, id_user, id_category, jumlah, deskripsi, tanggal);
 
   const transaksi = await createTransaksi(
     validatedData.id_user,

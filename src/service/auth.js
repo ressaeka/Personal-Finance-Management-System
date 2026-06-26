@@ -1,12 +1,7 @@
 import { createUsers, findUserByEmail, findUserByUsername, findUserById, updateUserById } from "../models/auth.js";
 import { generateToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
-import {
-  validateRegister,
-  validateLogin,
-  validateUserId,
-  validateUpdateProfile,
-} from "../validators/auth.js";
+import { validateRegister, validateLogin, validateUserId, validateUpdateProfile } from "../validators/auth.js";
 import { AppError } from "../utils/appError.js";
 
 export const registerService = async (userData) => {

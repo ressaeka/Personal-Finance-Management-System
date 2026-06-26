@@ -1,11 +1,6 @@
 import { createCategory, getAllCategory, getCategoryById, updateCategory, deleteCategory } from "../models/category.js";
 import { AppError } from "../utils/appError.js";
-import {
-  validateCreateCategory,
-  validateGetCategoryById,
-  validateUpdateCategory,
-  validateDeleteCategory,
-} from "../validators/category.js";
+import { validateCreateCategory, validateGetCategoryById, validateUpdateCategory, validateDeleteCategory } from "../validators/category.js";
 
 export const categoryService = async (id_user, nama_category, tipe) => {
   const validatedData = validateCreateCategory(id_user, nama_category, tipe);
