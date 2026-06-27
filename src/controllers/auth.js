@@ -1,6 +1,7 @@
 import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
 import { addToBlacklist } from "../models/tokenBlacklist.js";
 import { successResponse } from "../utils/response.js";
+import { AppError } from "../utils/appError.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -35,7 +36,7 @@ export const login = async (req, res, next) => {
 export const profile = async (req, res, next) => {
   try {
     if (!req.user || !req.user.id_user) {
-      throw new Error("User tidak terautentikasi");
+      throw new AppError("User tidak terautentikasi", 401);
     }
 
     const { id_user } = req.user;

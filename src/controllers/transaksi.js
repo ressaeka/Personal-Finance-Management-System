@@ -1,5 +1,5 @@
 import { createTransaksiService, getAllTransaksiService, getTransaksiByIdService, updateTransaksiService, deleteTransaksiService } from "../service/transaksi.js";
-import { successResponse, errorResponse } from "../utils/response.js";
+import { successResponse } from "../utils/response.js";
 
 export const createTransaksi = async (req, res, next) => {
   try {

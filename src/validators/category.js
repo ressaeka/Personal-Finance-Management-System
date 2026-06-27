@@ -10,15 +10,15 @@ const categoryIdSchema = z.coerce.number({ message: 'ID category tidak valid' })
 .int('ID category tidak valid')
 .positive('ID category tidak valid');
 
+const tipeSchema = z.enum(["pemasukan", "pengeluaran"], {
+  message: "Tipe harus 'pemasukan' atau 'pengeluaran'",
+});
+
 const categoryDataSchema = z.object({
   nama_category: z.string()
   .min(3, 'Nama category harus diisi dan minimal 3 karakter')
   .transform(v => v.trim()),
   tipe: tipeSchema,
-});
-
-const tipeSchema = z.enum(["pemasukan", "pengeluaran"], {
-  message: "Tipe harus 'pemasukan' atau 'pengeluaran'",
 });
 
 const categoryDataPartialSchema = z.object({

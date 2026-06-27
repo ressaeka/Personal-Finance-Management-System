@@ -63,8 +63,10 @@ model laporan {
   total_pemasukan Decimal  @default(0) @db.Decimal
   total_pengeluaran Decimal @default(0) @db.Decimal
   saldo           Decimal  @default(0) @db.Decimal
+  is_deleted      Boolean  @default(false)
   created_at      DateTime @default(now()) @db.Timestamp
   updated_at      DateTime @default(now()) @db.Timestamp
+  deleted_at      DateTime? @db.Timestamp
 
   user users @relation(fields: [id_user], references: [id_user])
 

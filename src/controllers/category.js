@@ -1,5 +1,5 @@
 import { categoryService, getAllCategoryService, getCategoryByIdService, updateCategoryService, deleteCategoryService } from "../service/category.js";
-import { successResponse, errorResponse } from "../utils/response.js";
+import { successResponse } from "../utils/response.js";
 
 export const createCategory = async (req, res, next) => {
   try {
