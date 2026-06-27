@@ -1,28 +1,31 @@
 import z from 'zod';
 import { validate } from '../utils/validate.js';
 
-const TIPE_ENUM = ['pemasukan', 'pengeluaran'];
 
 const userIdSchema = z.coerce.number({ message: 'User tidak ditemukan' })
-  .int('User tidak ditemukan')
-  .positive('User tidak ditemukan');
+.int('User tidak ditemukan')
+.positive('User tidak ditemukan');
 
 const categoryIdSchema = z.coerce.number({ message: 'ID category tidak valid' })
-  .int('ID category tidak valid')
-  .positive('ID category tidak valid');
+.int('ID category tidak valid')
+.positive('ID category tidak valid');
 
 const categoryDataSchema = z.object({
   nama_category: z.string()
-    .min(3, 'Nama category harus diisi dan minimal 3 karakter')
-    .transform(v => v.trim()),
-  tipe: z.string().refine(v => TIPE_ENUM.includes(v), { message: "Tipe harus 'pemasukan' atau 'pengeluaran'" }),
+  .min(3, 'Nama category harus diisi dan minimal 3 karakter')
+  .transform(v => v.trim()),
+  tipe: tipeSchema,
+});
+
+const tipeSchema = z.enum(["pemasukan", "pengeluaran"], {
+  message: "Tipe harus 'pemasukan' atau 'pengeluaran'",
 });
 
 const categoryDataPartialSchema = z.object({
   nama_category: z.string()
     .min(3, 'Nama category minimal 3 karakter')
     .transform(v => v.trim()),
-  tipe: z.string().refine(v => TIPE_ENUM.includes(v), { message: "Tipe harus 'pemasukan' atau 'pengeluaran'" }),
+  tipe: tipeSchema,
 });
 
 export const validateUserId = (id_user) => {

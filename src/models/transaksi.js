@@ -7,7 +7,7 @@ export const createTransaksi = async (id_user, id_category, jumlah, deskripsi, t
       id_category,
       jumlah,
       deskripsi,
-      tanggal: new Date(tanggal),
+      tanggal,
     },
     include: {
       category: { select: { nama_category: true, tipe: true } },
@@ -46,7 +46,7 @@ export const updateTransaksi = async (id_transaksi, id_user, id_category, jumlah
       id_category,
       jumlah,
       deskripsi,
-      tanggal: new Date(tanggal),
+      tanggal,
     },
   });
 };

@@ -2,7 +2,7 @@ import z from 'zod';
 import { AppError } from '../utils/appError.js';
 import { validate } from '../utils/validate.js';
 
-const TANGGAL_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 
 export const validateId = (id, fieldName = 'ID') => {
   const schema = z.coerce.number({ message: `${fieldName} tidak valid` })
@@ -28,7 +28,7 @@ export const validateTanggal = (tanggal) => {
   if (!tanggal) {
     return null;
   }
-  const schema = z.string().regex(TANGGAL_REGEX, 'Format tanggal tidak valid (YYYY-MM-DD)');
+  const schema = z.coerce.date();
   return validate(schema, tanggal);
 };
 

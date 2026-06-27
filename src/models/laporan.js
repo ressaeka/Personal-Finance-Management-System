@@ -2,15 +2,15 @@ import prisma from "../config/prisma.js";
 
 export const getDashboardStats = async (id_user) => {
   const [row] = await prisma.$queryRaw`
-    SELECT
-      COALESCE(SUM(CASE WHEN c.tipe = 'pemasukan' THEN t.jumlah ELSE 0 END), 0)::float8 as total_pemasukan,
-      COALESCE(SUM(CASE WHEN c.tipe = 'pengeluaran' THEN t.jumlah ELSE 0 END), 0)::float8 as total_pengeluaran,
-      COALESCE(SUM(CASE WHEN c.tipe = 'pemasukan' THEN t.jumlah ELSE -t.jumlah END), 0)::float8 as saldo
-    FROM transaksi t
-    JOIN category c on c.id_category = t.id_category
-    WHERE t.id_user = ${id_user}
-      AND DATE_TRUNC('month', t.created_at) = DATE_TRUNC('month', CURRENT_DATE)
-      AND t.is_deleted = FALSE
+  SELECT
+    COALESCE(SUM(CASE WHEN c.tipe = 'pemasukan' THEN t.jumlah ELSE 0 END), 0)::float8 AS total_pemasukan,
+    COALESCE(SUM(CASE WHEN c.tipe = 'pengeluaran' THEN t.jumlah ELSE 0 END), 0)::float8 AS total_pengeluaran,
+    COALESCE(SUM(t.jumlah), 0)::float8 AS saldo
+  FROM transaksi t
+  JOIN category c ON c.id_category = t.id_category
+  WHERE t.id_user = ${id_user}
+    AND DATE_TRUNC('month', t.created_at) = DATE_TRUNC('month', CURRENT_DATE)
+    AND t.is_deleted = FALSE
   `;
 
   return {

@@ -82,3 +82,5 @@ export const validateUpdateProfile = (id_user, username, email, password) => {
     ...validate(updateProfileFieldsSchema, data),
   };
 };
+
+

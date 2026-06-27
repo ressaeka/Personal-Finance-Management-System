@@ -32,3 +32,5 @@ export const updateUserById = async (id_user, username, email, password) => {
     select: { id_user: true, username: true, email: true, updated_at: true },
   });
 };
+
+
