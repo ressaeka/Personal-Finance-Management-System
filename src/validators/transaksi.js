@@ -28,7 +28,7 @@ export const validateTanggal = (tanggal) => {
   if (!tanggal) {
     return null;
   }
-  const schema = z.coerce.date();
+  const schema = z.coerce.date({ message: 'Format tanggal tidak valid' });
   return validate(schema, tanggal);
 };
 

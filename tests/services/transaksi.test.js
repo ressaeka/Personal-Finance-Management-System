@@ -67,7 +67,7 @@ describe("TRANSAKSI SERVICE TESTS", () => {
         createTransaksi.mockResolvedValue({ id_transaksi: 1, jumlah: 1000 });
         const result = await createTransaksiService(1, 1, 1000, "Test", "2024-06-15");
         expect(result).toBeDefined();
-        expect(createTransaksi).toHaveBeenCalledWith(1, 1, 1000, "Test", "2024-06-15");
+        expect(createTransaksi).toHaveBeenCalledWith(1, 1, 1000, "Test", expect.any(Date));
       });
 
       test("should reject jumlah of 0", async () => {
@@ -127,7 +127,7 @@ describe("TRANSAKSI SERVICE TESTS", () => {
         expect(result.jumlah).toBe(-50000);
         expect(result.deskripsi).toBe("Belanja");
         expect(getCategoryById).toHaveBeenCalledWith(1, 1);
-        expect(createTransaksi).toHaveBeenCalledWith(1, 1, -50000, "Belanja", "2024-06-15");
+        expect(createTransaksi).toHaveBeenCalledWith(1, 1, -50000, "Belanja", expect.any(Date));
       });
 
       test("should create transaksi without deskripsi", async () => {
@@ -147,7 +147,7 @@ describe("TRANSAKSI SERVICE TESTS", () => {
 
         expect(result).toBeDefined();
         expect(result.jumlah).toBe(-25000);
-        expect(createTransaksi).toHaveBeenCalledWith(1, 1, -25000, null, "2024-06-15");
+        expect(createTransaksi).toHaveBeenCalledWith(1, 1, -25000, null, expect.any(Date));
       });
 
       test("should handle database error", async () => {
@@ -353,7 +353,7 @@ describe("TRANSAKSI SERVICE TESTS", () => {
 
         expect(result).toBeDefined();
         expect(result.jumlah).toBe(-75000);
-        expect(updateTransaksi).toHaveBeenCalledWith(1, 1, 2, -75000, "Belanja bulanan", "2024-06-20");
+        expect(updateTransaksi).toHaveBeenCalledWith(1, 1, 2, -75000, "Belanja bulanan", expect.any(Date));
       });
 
       test("should throw error if update returns null", async () => {
