@@ -1,70 +1,72 @@
-import { registerService, loginService, getProfileService, updateUserByIdService } from "../service/auth.js";
-import { successResponse, errorResponse } from "../utils/response.js";
+import { registerService, loginService, getProfileService, updateProfileService } from "../service/auth.js";
+import { successResponse } from "../utils/response.js";
 
 export const register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-    const result = await registerService({ username, email, password });
+    const result = await registerService(req.body);
 
     return successResponse(res, {
-      id: result.id_user,
-      username: result.username,
-      email: result.email,
-    }, "Register berhasil", 201);
+        id: result.id,
+        username: result.username,
+        email: result.email,
+      },"Register berhasil", 201
+    );
+
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
 export const login = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    const result = await loginService({ username, password });
+    const result = await loginService(req.body);
 
-    return succesResponse(res,{
-     user: result.user,
-     token: result.token
-    }, 'success', 200 );
+    return successResponse( res ,{
+        user: result.user,
+        token: result.token,
+      }, "Login berhasil", 200
+    );
 
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
 export const profile = async (req, res, next) => {
   try {
-    if (!req.user || !req.user.id_user) {
-      throw new Error("User tidak terautentikasi");
-    }
+    const result = await getProfileService(req.user.id);
 
-    const { id_user } = req.user;
-    const result = await getProfileService({ id_user });
-
-    return successResponse(res, result, "Berhasil mengambil data user");
+    return successResponse( res, result, "Berhasil mengambil data user");
+    
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
-export const updateUser = async (req, res, next) => {
+export const updateProfile = async (req, res, next) => {
   try {
-    const id_user = req.user.id_user;
-    const { username, email, password } = req.body;
+    const result = await updateProfileService(
+      req.user.id,
+      req.body.username,
+      req.body.email,
+      req.body.password
+    );
 
-    const result = await updateUserByIdService(id_user, username, email, password);
+    return successResponse( res, result, "Berhasil memperbarui data user" );
 
-    return successResponse(res, result, "Berhasil memperbarui data user");
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
 export const logout = async (req, res, next) => {
   try {
-    return successResponse(res, {
-      instruction: "Silakan hapus token dari penyimpanan client",
-    }, "Logout berhasil");
+    return successResponse( res, {
+        instruction: "Silakan hapus token dari client",
+      }, "Logout berhasil"
+    );
+
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
