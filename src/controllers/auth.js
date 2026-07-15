@@ -5,13 +5,16 @@ export const register = async (req, res, next) => {
   try {
     const result = await registerService(req.body);
 
-    return successResponse(res, {
+    return successResponse(
+      res,
+      {
         id: result.id,
         username: result.username,
         email: result.email,
-      },"Register berhasil", 201
+      },
+      "Register berhasil",
+      201
     );
-
   } catch (err) {
     next(err);
   }
@@ -21,12 +24,15 @@ export const login = async (req, res, next) => {
   try {
     const result = await loginService(req.body);
 
-    return successResponse( res ,{
+    return successResponse(
+      res,
+      {
         user: result.user,
         token: result.token,
-      }, "Login berhasil", 200
+      },
+      "Login berhasil",
+      200
     );
-
   } catch (err) {
     next(err);
   }
@@ -36,8 +42,11 @@ export const profile = async (req, res, next) => {
   try {
     const result = await getProfileService(req.user.id);
 
-    return successResponse( res, result, "Berhasil mengambil data user");
-    
+    return successResponse(
+      res,
+      result,
+      "Berhasil mengambil data user"
+    );
   } catch (err) {
     next(err);
   }
@@ -47,13 +56,14 @@ export const updateProfile = async (req, res, next) => {
   try {
     const result = await updateProfileService(
       req.user.id,
-      req.body.username,
-      req.body.email,
-      req.body.password
+      req.body
     );
 
-    return successResponse( res, result, "Berhasil memperbarui data user" );
-
+    return successResponse(
+      res,
+      result,
+      "Berhasil memperbarui data user"
+    );
   } catch (err) {
     next(err);
   }
@@ -61,11 +71,13 @@ export const updateProfile = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    return successResponse( res, {
+    return successResponse(
+      res,
+      {
         instruction: "Silakan hapus token dari client",
-      }, "Logout berhasil"
+      },
+      "Logout berhasil"
     );
-
   } catch (err) {
     next(err);
   }

@@ -1,33 +1,26 @@
 import { createUser, findUserByEmail, findUserById, findUserByUsername, updateUserById } from "../repositories/auth.js";
 import { generateToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
-import { validateRegister, validateLogin, validateUserId, validateUpdateProfile} from "../validators/auth.js";
 import { AppError } from "../utils/appError.js";
 
 export const registerService = async (userData) => {
-  const validatedData = validateRegister(
-    userData.username,
-    userData.email,
-    userData.password
-  );
-
-  const existingEmail = await findUserByEmail(validatedData.email);
+  const existingEmail = await findUserByEmail(userData.email);
 
   if (existingEmail) {
     throw new AppError("Email sudah terdaftar", 409);
   }
 
-  const existingUsername = await findUserByUsername(validatedData.username);
+  const existingUsername = await findUserByUsername(userData.username);
 
   if (existingUsername) {
     throw new AppError("Username sudah terdaftar", 409);
   }
 
-  const hashedPassword = await hashPassword(validatedData.password);
+  const hashedPassword = await hashPassword(userData.password);
 
   const user = await createUser({
-    username: validatedData.username,
-    email: validatedData.email,
+    username: userData.username,
+    email: userData.email,
     password: hashedPassword,
   });
 
@@ -37,18 +30,13 @@ export const registerService = async (userData) => {
 };
 
 export const loginService = async ({ username, password }) => {
-  const validatedData = validateLogin(username, password);
-
-  const user = await findUserByUsername(validatedData.username);
+  const user = await findUserByUsername(username);
 
   if (!user) {
     throw new AppError("Username atau password salah", 401);
   }
 
-  const isMatch = await comparePassword(
-    validatedData.password,
-    user.password
-  );
+  const isMatch = await comparePassword(password, user.password);
 
   if (!isMatch) {
     throw new AppError("Username atau password salah", 401);
@@ -71,9 +59,7 @@ export const loginService = async ({ username, password }) => {
 };
 
 export const getProfileService = async (id) => {
-  const validUserId = validateUserId(id);
-
-  const user = await findUserById(validUserId);
+  const user = await findUserById(id);
 
   if (!user) {
     throw new AppError("User tidak ditemukan", 404);
@@ -87,50 +73,38 @@ export const getProfileService = async (id) => {
   };
 };
 
-export const updateProfileService = async ( id, username, email, password ) => {
-  const validatedData = validateUpdateProfile(
-    id,
-    username,
-    email,
-    password
-  );
-
-  const user = await findUserById(validatedData.id);
+export const updateProfileService = async (id, updateData) => {
+  const user = await findUserById(id);
 
   if (!user) {
     throw new AppError("User tidak ditemukan", 404);
   }
 
-  if (validatedData.email) {
-    const existingEmail = await findUserByEmail(validatedData.email);
+  if (updateData.email) {
+    const existingEmail = await findUserByEmail(updateData.email);
 
-    if (existingEmail && existingEmail.id !== validatedData.id) {
+    if (existingEmail && existingEmail.id !== id) {
       throw new AppError("Email sudah terdaftar", 409);
     }
   }
 
-  if (validatedData.username) {
-    const existingUsername = await findUserByUsername(
-      validatedData.username
-    );
+  if (updateData.username) {
+    const existingUsername = await findUserByUsername(updateData.username);
 
-    if (
-      existingUsername &&
-      existingUsername.id !== validatedData.id
-    ) {
+    if (existingUsername && existingUsername.id !== id) {
       throw new AppError("Username sudah terdaftar", 409);
     }
   }
 
-  const updatedUser = await updateUserById(validatedData.id, {
-    username: validatedData.username ?? user.username,
-    email: validatedData.email ?? user.email,
-    password: validatedData.password
-      ? await hashPassword(validatedData.password)
+  const updatedUser = await updateUserById(id, {
+    username: updateData.username ?? user.username,
+    email: updateData.email ?? user.email,
+    password: updateData.password
+      ? await hashPassword(updateData.password)
       : user.password,
   });
 
-  const { password: _, ...userWithoutPassword } = updatedUser;
+  const { password, ...userWithoutPassword } = updatedUser;
 
   return userWithoutPassword;
 };
