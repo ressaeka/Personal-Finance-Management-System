@@ -3,16 +3,12 @@ import { successResponse } from "../utils/response.js";
 
 export const createCategory = async (req, res, next) => {
   try {
-    const { nameCategory, tipe } = req.body;
-
     const category = await createCategoryService(
       req.user.id,
-      nameCategory,
-      tipe
+      req.body
     );
 
-    return successResponse(res, category,"Category berhasil dibuat", 201 );
-
+    return successResponse(res, category, "Category berhasil dibuat", 201 );
   } catch (err) {
     next(err);
   }
@@ -22,8 +18,7 @@ export const getAllCategory = async (req, res, next) => {
   try {
     const categories = await getAllCategoryService(req.user.id);
 
-    return successResponse( res, categories, "Berhasil mengambil semua category" ); 
-
+    return successResponse( res, categories,"Berhasil mengambil semua category", 200);
   } catch (err) {
     next(err);
   }
@@ -36,8 +31,7 @@ export const getCategoryById = async (req, res, next) => {
       req.user.id
     );
 
-    return successResponse( res, category, "Berhasil mengambil category" );
-
+    return successResponse( res,category,"Berhasil mengambil category", 200);
   } catch (err) {
     next(err);
   }
@@ -45,16 +39,13 @@ export const getCategoryById = async (req, res, next) => {
 
 export const updateCategory = async (req, res, next) => {
   try {
-    const { nameCategory, tipe } = req.body;
-
     const category = await updateCategoryService(
       Number(req.params.id),
       req.user.id,
-      nameCategory,
-      tipe
+      req.body
     );
 
-    return successResponse( res, category, "Berhasil mengupdate category" );
+    return successResponse( res, category, "Berhasil mengupdate category", 201);
   } catch (err) {
     next(err);
   }
@@ -67,7 +58,7 @@ export const deleteCategory = async (req, res, next) => {
       req.user.id
     );
 
-    return successResponse( res, category, "Category berhasil dihapus" );
+    return successResponse( res,category,"Category berhasil dihapus", 200);
   } catch (err) {
     next(err);
   }
