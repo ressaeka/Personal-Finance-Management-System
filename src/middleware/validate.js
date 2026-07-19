@@ -1,8 +1,15 @@
 import { AppError } from "../utils/appError.js";
 
-export const validate = (schema) => {
+export const validate = (schema, source = "body") => {
   return (req, res, next) => {
-    const result = schema.safeParse(req.body);
+    const data =
+      source === "query"
+        ? req.query
+        : source === "params"
+          ? req.params
+          : req.body;
+
+    const result = schema.safeParse(data);
 
     if (!result.success) {
       return next(
@@ -13,7 +20,13 @@ export const validate = (schema) => {
       );
     }
 
-    req.body = result.data;
+    if (source === "query") {
+      req.query = result.data;
+    } else if (source === "params") {
+      req.params = result.data;
+    } else {
+      req.body = result.data;
+    }
 
     next();
   };

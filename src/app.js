@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import auth from "./routes/auth.js";
 import category from "./routes/category.js";
 import transaksi from "./routes/transaksi.js";
-// import laporan from "./routes/laporan.js";
+import laporan from "./routes/laporan.js";
 
 // Menginisialisasi koneksi database saat aplikasi pertama kali dinyalakan
 import "./config/database.js";
@@ -12,6 +12,7 @@ import "./config/database.js";
 dotenv.config();
 
 // Mengimport kustom middleware
+import helmetMiddleware from "./middleware/helmet.js";
 import corsMiddleware from "./middleware/cors.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -19,13 +20,14 @@ const app = express();
 
 // --- GLOBAL MIDDLEWARES ---
 app.use(corsMiddleware);
+app.use(helmetMiddleware);
 app.use(express.json());
 
 // --- API ROUTES (V1) ---
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/category", category);
 app.use("/api/v1/transaksi", transaksi);
-// app.use("/api/v1/laporan", laporan);
+app.use("/api/v1/laporan", laporan);
 
 // --- GLOBAL ERROR HANDLER ---
 app.use(errorHandler);

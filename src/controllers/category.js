@@ -45,7 +45,7 @@ export const updateCategory = async (req, res, next) => {
       req.body
     );
 
-    return successResponse( res, category, "Berhasil mengupdate category", 201);
+    return successResponse( res, category, "Berhasil mengupdate category", 200);
   } catch (err) {
     next(err);
   }

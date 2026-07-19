@@ -18,7 +18,7 @@ export const getAllTransaksi = async (req, res, next) => {
   try {
     const transaksi = await getAllTransaksiService(req.user.id);
 
-    return successResponse( res, transaksi, "Berhasil mengambil semua transaksi");
+    return successResponse( res, transaksi, "Berhasil mengambil semua transaksi", 200);
   } catch (err) {
     next(err);
   }
@@ -31,7 +31,7 @@ export const getTransaksiById = async (req, res, next) => {
       req.user.id
     );
 
-    return successResponse( res, transaksi, "Berhasil mengambil transaksi" );
+    return successResponse( res, transaksi, "Berhasil mengambil transaksi", 200 );
   } catch (err) {
     next(err);
   }
@@ -45,7 +45,7 @@ export const updateTransaksi = async (req, res, next) => {
       req.body
     );
 
-    return successResponse( res, transaksi, "Berhasil mengupdate transaksi" );
+    return successResponse( res, transaksi, "Berhasil mengupdate transaksi",200 );
   } catch (err) {
     next(err);
   }
@@ -58,7 +58,7 @@ export const deleteTransaksi = async (req, res, next) => {
       req.user.id
     );
 
-    return successResponse( res, transaksi, "Transaksi berhasil dihapus");
+    return successResponse( res, transaksi, "Transaksi berhasil dihapus", 200);
   } catch (err) {
     next(err);
   }

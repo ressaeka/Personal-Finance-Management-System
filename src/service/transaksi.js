@@ -1,5 +1,5 @@
-import { createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi } from "../repositories/transaksi.js";w
-import { getCategoryById } from "../repositories/category.js";
+import { createTransaksi, getAllTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi } from "../repositories/transaksi.js";
+import { findCategoryById } from "../repositories/category.js";
 import { findUserById } from "../repositories/auth.js";
 import { AppError } from "../utils/appError.js";
 
@@ -19,8 +19,7 @@ export const createTransaksiService = async (userId, transaksiData) => {
     throw new AppError("Category tidak ditemukan", 404);
   }
 
-  const jumlah =
-    category.tipe === "pengeluaran"
+  const jumlah = category.tipe === "pengeluaran"
       ? -Math.abs(transaksiData.jumlah)
       : Math.abs(transaksiData.jumlah);
 
@@ -60,7 +59,7 @@ export const updateTransaksiService = async ( transaksiId, userId, transaksiData
     throw new AppError("Transaksi tidak ditemukan", 404);
   }
 
-  const category = await getCategoryById(
+  const category = await findCategoryById(
     transaksiData.id_category,
     userId
   );
@@ -69,18 +68,15 @@ export const updateTransaksiService = async ( transaksiId, userId, transaksiData
     throw new AppError("Category tidak ditemukan", 404);
   }
 
-  const jumlah =
-    category.tipe === "pengeluaran"
+  const jumlah = category.tipe === "pengeluaran"
       ? -Math.abs(transaksiData.jumlah)
       : Math.abs(transaksiData.jumlah);
 
   return await updateTransaksi(transaksiId, {
     id_category: transaksiData.id_category,
     jumlah,
-    deskripsi:
-      transaksiData.deskripsi ?? transaksi.deskripsi,
-    tanggal:
-      transaksiData.tanggal ?? transaksi.tanggal,
+    deskripsi: transaksiData.deskripsi ?? transaksi.deskripsi,
+    tanggal: transaksiData.tanggal ?? transaksi.tanggal,
   });
 };
 

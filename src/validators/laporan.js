@@ -1,22 +1,40 @@
-import { AppError } from '../utils/appError.js';
+import { z } from "zod";
 
-export const validateDashboardStats = (userId) => {
-  if (!userId || !Number.isInteger(Number(userId)) || Number(userId) <= 0) {
-    throw new AppError('User tidak ditemukan/terautentikasi', 401);
-  }
-  return Number(userId);
-};
+export const laporanQuerySchema = z.object({
+  startDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Format startDate harus YYYY-MM-DD")
+    .optional(),
 
-export const validateMonthlyReport = (userId) => {
-  if (!userId || !Number.isInteger(Number(userId)) || Number(userId) <= 0) {
-    throw new AppError('User tidak ditemukan/terautentikasi', 401);
-  }
-  return Number(userId);
-};
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Format endDate harus YYYY-MM-DD")
+    .optional(),
 
-export const validateCategoryReport = (userId) => {
-  if (!userId || !Number.isInteger(Number(userId)) || Number(userId) <= 0) {
-    throw new AppError('User tidak ditemukan/terautentikasi', 401);
-  }
-  return Number(userId);
-};
+  categoryId: z.coerce
+    .number()
+    .int("categoryId harus angka bulat")
+    .positive("categoryId harus lebih dari 0")
+    .optional(),
+
+  tipe: z
+    .enum(["PEMASUKAN", "PENGELUARAN"], {
+      message: "tipe harus PEMASUKAN atau PENGELUARAN",
+    })
+    .optional(),
+
+  page: z.coerce
+    .number()
+    .int("page harus angka bulat")
+    .positive("page harus lebih dari 0")
+    .optional()
+    .default(1),
+
+  limit: z.coerce
+    .number()
+    .int("limit harus angka bulat")
+    .positive("limit harus lebih dari 0")
+    .max(100, "limit maksimal 100")
+    .optional()
+    .default(10),
+});
