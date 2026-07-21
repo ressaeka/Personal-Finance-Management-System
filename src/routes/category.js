@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.post( "/", authenticate, validate(createCategorySchema), createCategory );
 router.get( "/", authenticate, getAllCategory );
-router.get( "/:id_category", authenticate, validate(categoryIdSchema, "params"), getCategoryById);
-router.put( "/:id_category", authenticate, validate(categoryIdSchema, "params"), validate(updateCategorySchema), updateCategory);
-router.delete( "/:id_category", authenticate, validate(categoryIdSchema, "params"), deleteCategory);
+router.get( "/:id", authenticate, validate(categoryIdSchema, "params"), getCategoryById);
+router.put( "/:id", authenticate, validate(categoryIdSchema, "params"), validate(updateCategorySchema), updateCategory);
+router.delete( "/:id", authenticate, validate(categoryIdSchema, "params"), deleteCategory);
 
 export default router;

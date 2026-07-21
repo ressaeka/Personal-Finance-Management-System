@@ -6,7 +6,6 @@ import transaksi from "./routes/transaksi.js";
 import laporan from "./routes/laporan.js";
 
 // Menginisialisasi koneksi database saat aplikasi pertama kali dinyalakan
-import "./config/database.js";
 
 // Memuat variabel lingkungan dari file .env
 dotenv.config();
@@ -21,8 +20,9 @@ const app = express();
 // --- GLOBAL MIDDLEWARES ---
 app.use(corsMiddleware);
 app.use(helmetMiddleware);
-app.use(express.json());
-
+app.use(express.json({
+    limit: "10kb"
+}));
 // --- API ROUTES (V1) ---
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/category", category);

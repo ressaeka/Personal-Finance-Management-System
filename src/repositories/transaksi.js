@@ -1,19 +1,68 @@
 import prisma from "../config/prisma.js";
 
-export const createTransaksi = async (data) => {
-  return await prisma.transaksi.create({
+
+export const createTransaksi = (data) => {
+  return prisma.transaksi.create({
     data,
+    select: {
+      id: true,
+      jumlah: true,
+      deskripsi: true,
+      tanggal: true,
+      createdAt: true,
+      category: {
+        select: {
+          id: true,
+          nameCategory: true,
+          tipe: true,
+        },
+      },
+    },
   });
 };
 
-export const getAllTransaksi = async (id_user) => {
-  return await prisma.transaksi.findMany({
-    where: {
-      id_user,
-      is_deleted: false,
+
+export const findTransaksiById = (where) => {
+  return prisma.transaksi.findFirst({
+    where,
+    select: {
+      id: true,
+      jumlah: true,
+      deskripsi: true,
+      tanggal: true,
+      createdAt: true,
+      updatedAt: true,
+      category: {
+        select: {
+          id: true,
+          nameCategory: true,
+          tipe: true,
+        },
+      },
     },
-    include: {
-      category: true,
+  });
+};
+
+
+export const findAllTransaksi = ({ userId, skip, take }) => {
+  return prisma.transaksi.findMany({
+    where: {
+      userId,
+      isDeleted: false,
+    },
+    select: {
+      id: true,
+      jumlah: true,
+      deskripsi: true,
+      tanggal: true,
+      createdAt: true,
+      category: {
+        select: {
+          id: true,
+          nameCategory: true,
+          tipe: true,
+        },
+      },
     },
     orderBy: [
       {
@@ -23,39 +72,58 @@ export const getAllTransaksi = async (id_user) => {
         createdAt: "desc",
       },
     ],
+    skip,
+    take,
   });
 };
 
-export const getTransaksiById = async (id_transaksi, id_user) => {
-  return await prisma.transaksi.findFirst({
+
+export const countTransaksi = (userId) => {
+  return prisma.transaksi.count({
     where: {
-      id_transaksi,
-      id_user,
-      is_deleted: false,
-    },
-    include: {
-      category: true,
+      userId,
+      isDeleted: false,
     },
   });
 };
 
-export const updateTransaksi = async (id_transaksi, data) => {
-  return await prisma.transaksi.update({
+
+export const updateTransaksi = (id, data) => {
+  return prisma.transaksi.update({
     where: {
-      id_transaksi,
+      id,
     },
     data,
+    select: {
+      id: true,
+      jumlah: true,
+      deskripsi: true,
+      tanggal: true,
+      updatedAt: true,
+      category: {
+        select: {
+          id: true,
+          nameCategory: true,
+          tipe: true,
+        },
+      },
+    },
   });
 };
 
-export const deleteTransaksi = async (id_transaksi) => {
-  return await prisma.transaksi.update({
+
+export const deleteTransaksi = (id) => {
+  return prisma.transaksi.update({
     where: {
-      id_transaksi,
+      id,
     },
     data: {
-      is_deleted: true,
+      isDeleted: true,
       deletedAt: new Date(),
+    },
+    select: {
+      id: true,
+      deletedAt: true,
     },
   });
 };

@@ -8,7 +8,8 @@ export const registerSchema = z.object({
   username: z
     .string()
     .trim()
-    .min(3, "Username minimal 3 karakter"),
+    .min(3, "Username minimal 3 karakter")
+    .max(30),
 
 
   email: z

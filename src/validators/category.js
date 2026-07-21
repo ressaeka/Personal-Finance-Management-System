@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-const categoryTypeSchema = z.enum(["Pemasukan", "Pengeluaran"], "Tipe harus 'pemasukan' atau 'pengeluaran'");
+const categoryTypeSchema = z.enum(["PEMASUKAN", "PENGELUARAN"], "Tipe harus 'pemasukan' atau 'pengeluaran'");
 
 export const userIdSchema = z.object({
-  id_user: z.coerce
+  userId: z.coerce
     .number()
     .int("ID user harus angka bulat")
     .positive("User tidak ditemukan/terautentikasi"),
@@ -11,7 +11,7 @@ export const userIdSchema = z.object({
 
 
 export const categoryIdSchema = z.object({
-  id_category: z.coerce
+  id : z.coerce
     .number()
     .int("ID category harus angka bulat")
     .positive("ID category tidak valid"),
@@ -19,7 +19,7 @@ export const categoryIdSchema = z.object({
 
 
 export const createCategorySchema = z.object({
-  nama_category: z
+  nameCategory: z
     .string()
     .trim()
     .min(3, "Nama category minimal 3 karakter"),
@@ -29,7 +29,7 @@ export const createCategorySchema = z.object({
 
 
 export const updateCategorySchema = z.object({
-  nama_category: z
+  nameCategory: z
     .string()
     .trim()
     .min(3, "Nama category minimal 3 karakter")
