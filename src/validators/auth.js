@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 
-const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
+const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
 
 export const registerSchema = z.object({
 
@@ -42,16 +42,6 @@ export const loginSchema = z.object({
 })
 
 
-export const userIdSchema = z.object({
-
-  id_user: z.coerce
-    .number()
-    .int("ID user harus angka bulat")
-    .positive("ID user harus lebih dari 0")
-
-});
-
-
 export const updateSchema = z.object ({
   
     username : z
@@ -74,4 +64,3 @@ export const updateSchema = z.object ({
     .optional(),
 
 })
-
