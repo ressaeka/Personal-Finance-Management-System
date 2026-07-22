@@ -33,6 +33,10 @@ export const authenticate = (req, res, next) => {
       return next(new AppError("Token sudah kadaluarsa, silakan login ulang", 401));
     }
 
+    if (err.name === "JsonWebTokenError") {
+      return next(new AppError("Token tidak valid", 401));
+    }
+
     return next(err);
   }
 };

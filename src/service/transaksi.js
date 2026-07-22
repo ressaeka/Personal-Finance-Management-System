@@ -107,8 +107,10 @@ export const updateTransaksiService = async (
     throw new AppError("Transaksi tidak ditemukan", 404);
   }
 
+  const updateCategoryId = transaksiData.categoryId ?? transaksi.categoryId;
+
   const category = await findCategoryById({
-    id: transaksiData.categoryId,
+    id: updateCategoryId,
     userId,
     isDeleted: false,
   });
@@ -117,17 +119,28 @@ export const updateTransaksiService = async (
     throw new AppError("Category tidak ditemukan", 404);
   }
 
-  const jumlah =
-    category.tipe === "PENGELUARAN"
-      ? -Math.abs(transaksiData.jumlah)
-      : Math.abs(transaksiData.jumlah);
+  const updateData = {};
 
-  return updateTransaksi(transaksiId, {
-    categoryId: transaksiData.categoryId,
-    jumlah,
-    deskripsi: transaksiData.deskripsi ?? transaksi.deskripsi,
-    tanggal: transaksiData.tanggal ?? transaksi.tanggal,
-  });
+  if (transaksiData.categoryId !== undefined) {
+    updateData.categoryId = transaksiData.categoryId;
+  }
+
+  if (transaksiData.jumlah !== undefined) {
+    updateData.jumlah =
+      category.tipe === "PENGELUARAN"
+        ? -Math.abs(transaksiData.jumlah)
+        : Math.abs(transaksiData.jumlah);
+  }
+
+  if (transaksiData.deskripsi !== undefined) {
+    updateData.deskripsi = transaksiData.deskripsi;
+  }
+
+  if (transaksiData.tanggal !== undefined) {
+    updateData.tanggal = transaksiData.tanggal;
+  }
+
+  return updateTransaksi(transaksiId, updateData);
 };
 
 export const deleteTransaksiService = async (

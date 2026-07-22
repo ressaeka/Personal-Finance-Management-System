@@ -27,7 +27,10 @@ export const createCategoryService = async (userId, body) => {
 };
 
 
-export const getAllCategoryService = async (userId, { page = 1, limit = 50 } ) => {
+export const getAllCategoryService = async (userId, { page = 1, limit = 50 }) => {
+  page = Number(page);
+  limit = Number(limit);
+
   const skip = (page - 1) * limit;
 
   const [categories, totalData] = await Promise.all([
