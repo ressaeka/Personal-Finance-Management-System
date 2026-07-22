@@ -5,20 +5,14 @@ export const getLaporan = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
-    const {
-      categoryId,
-      startDate,
-      endDate,
-      page,
-      limit,
-    } = req.query;
+    const { categoryId, startDate, endDate, page, limit } = req.query;
 
     const laporan = await getLaporanService(userId, {
       categoryId,
       startDate,
       endDate,
-      page: Number(page) || 1,
-      limit: Number(limit) || 10,
+      page,
+      limit,
     });
 
     return successResponse(
