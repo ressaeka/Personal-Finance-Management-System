@@ -1,4 +1,4 @@
-import { registerService, loginService, getProfileService, updateProfileService } from "../service/auth.js";
+import { registerService, loginService, getProfileService, updateProfileService } from "../services/auth.js";
 import { successResponse } from "../utils/response.js";
 
 export const register = async (req, res, next) => {

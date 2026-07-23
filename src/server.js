@@ -1,13 +1,7 @@
 import app from "./app.js";
 
-const port = process.env.PORT || 3000;
-const host = process.env.HOST === "production" ? "0.0.0.0" : "localhost";
+const PORT = process.env.PORT || 3000;
 
-app.listen(port, host, () => {
-    console.log(`Server is running http://${host}:${port}`)
-})
-
-
-
-
-
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});

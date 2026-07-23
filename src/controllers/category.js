@@ -4,7 +4,7 @@ import {
   getCategoryByIdService,
   updateCategoryService,
   deleteCategoryService,
-} from "../service/category.js";
+} from "../services/category.js";
 import { successResponse } from "../utils/response.js";
 
 

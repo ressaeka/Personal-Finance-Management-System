@@ -4,7 +4,7 @@ import {
   findTransaksiByIdService,
   updateTransaksiService,
   deleteTransaksiService,
-} from "../service/transaksi.js";
+} from "../services/transaksi.js";
 
 import { successResponse } from "../utils/response.js";
 

@@ -1,4 +1,4 @@
-import { getLaporanService } from "../service/laporan.js";
+import { getLaporanService } from "../services/laporan.js";
 import { successResponse } from "../utils/response.js";
 
 export const getLaporan = async (req, res, next) => {
