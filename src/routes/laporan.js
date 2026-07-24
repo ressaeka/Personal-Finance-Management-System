@@ -6,6 +6,6 @@ import { laporanQuerySchema } from "../validators/laporan.js"
 
 const router = express.Router();
 
-router.get("/", authenticate,validate(laporanQuerySchema), getLaporan);
+router.get("/", authenticate, validate(laporanQuerySchema, "query"), getLaporan);
 
 export default router;

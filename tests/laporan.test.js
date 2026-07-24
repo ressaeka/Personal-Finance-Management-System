@@ -67,6 +67,7 @@ describe("GET /api/v1/laporan", () => {
       .get("/api/v1/laporan?page=1&limit=10")
       .set("Authorization", `Bearer ${token}`);
 
+    console.log("LAPORAN GET RESPONSE:", res.body);
     expect(res.status).toBe(200);
     expect(res.body.data.pagination).toBeDefined();
     expect(res.body.data.pagination.totalData).toBe(4);
@@ -78,6 +79,15 @@ describe("GET /api/v1/laporan", () => {
   it("should filter by categoryId", async () => {
     const res = await request
       .get(`/api/v1/laporan?categoryId=${expenseCategoryId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.pagination.totalData).toBe(2);
+  });
+
+  it("should filter by tipe", async () => {
+    const res = await request
+      .get(`/api/v1/laporan?tipe=PENGELUARAN`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);

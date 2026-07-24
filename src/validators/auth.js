@@ -63,4 +63,7 @@ export const updateSchema = z.object ({
     .regex( STRONG_PASSWORD_REGEX , "Password harus mengandung huruf kecil, huruf besar, angka, dan simbol" )
     .optional(),
 
-})
+}).refine(
+  (data) => Object.keys(data).length > 0,
+  { message: "Minimal satu field harus diisi untuk update" }
+)

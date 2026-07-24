@@ -15,6 +15,7 @@ export const getLaporanService = async (
     endDate,
     page = 1,
     limit = 10,
+    tipe,
   }
 ) => {
   if (!userId) {
@@ -28,6 +29,12 @@ export const getLaporanService = async (
 
   if (categoryId) {
     where.categoryId = Number(categoryId);
+  }
+
+  if (tipe) {
+    where.category = {
+      tipe: tipe,
+    };
   }
 
   if (startDate && endDate) {

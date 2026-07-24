@@ -100,7 +100,6 @@ describe("GET /api/v1/category", () => {
     const res = await request
       .get("/api/v1/category?page=1&limit=10")
       .set("Authorization", `Bearer ${token}`);
-
     expect(res.status).toBe(200);
     expect(res.body.data.pagination).toBeDefined();
     expect(res.body.data.pagination.totalData).toBe(2);

@@ -3,20 +3,29 @@ import {
   findCategoryById,
   findAllCategory,
   findCategoryByName,
+  findCategoryByNameIncludeDeleted,
+  restoreCategory,
   updateCategory,
   deleteCategory,
   countCategory,
 } from "../repositories/category.js";
-import { AppError } from "../utils/appError.js";
 
+import { AppError } from "../utils/appError.js";
 
 export const createCategoryService = async (userId, body) => {
   const { nameCategory, tipe } = body;
 
-  const category = await findCategoryByName(userId, nameCategory);
+  const category = await findCategoryByNameIncludeDeleted(
+    userId,
+    nameCategory
+  );
 
   if (category) {
-    throw new AppError("Category sudah ada", 409);
+    if (!category.isDeleted) {
+      throw new AppError("Category sudah ada", 409);
+    }
+
+    return await restoreCategory(category.id, tipe);
   }
 
   return await createCategory({
@@ -26,8 +35,10 @@ export const createCategoryService = async (userId, body) => {
   });
 };
 
-
-export const getAllCategoryService = async (userId, { page = 1, limit = 50 }) => {
+export const getAllCategoryService = async (
+  userId,
+  { page = 1, limit = 50 }
+) => {
   page = Number(page);
   limit = Number(limit);
 
@@ -67,8 +78,11 @@ export const getCategoryByIdService = async (categoryId, userId) => {
   return category;
 };
 
-
-export const updateCategoryService = async ( categoryId, userId, body ) => {
+export const updateCategoryService = async (
+  categoryId,
+  userId,
+  body
+) => {
   const category = await findCategoryById({
     id: categoryId,
     userId,
@@ -90,11 +104,17 @@ export const updateCategoryService = async ( categoryId, userId, body ) => {
     }
   }
 
-  return await updateCategory(categoryId, body);
+  const updateData = {};
+  if (body.nameCategory !== undefined) updateData.nameCategory = body.nameCategory;
+  if (body.tipe !== undefined) updateData.tipe = body.tipe;
+
+  return await updateCategory(categoryId, userId, updateData);
 };
 
-
-export const deleteCategoryService = async ( categoryId, userId ) => {
+export const deleteCategoryService = async (
+  categoryId,
+  userId
+) => {
   const category = await findCategoryById({
     id: categoryId,
     userId,
@@ -105,5 +125,5 @@ export const deleteCategoryService = async ( categoryId, userId ) => {
     throw new AppError("Category tidak ditemukan", 404);
   }
 
-  return await deleteCategory(categoryId);
+  return await deleteCategory(categoryId, userId);
 };

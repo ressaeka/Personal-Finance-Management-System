@@ -29,6 +29,23 @@ export const createTransaksiSchema = z.object({
     .optional(),
 });
 
-export const updateTransaksiSchema = createTransaksiSchema.partial();
 
+export const updateTransaksiSchema = createTransaksiSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: "Minimal satu field harus diisi untuk update" }
+);
 
+export const transaksiQuerySchema = z.object({
+  page: z.coerce
+    .number()
+    .int("page harus angka bulat")
+    .positive("page harus lebih dari 0")
+    .catch(1),
+
+  limit: z.coerce
+    .number()
+    .int("limit harus angka bulat")
+    .positive("limit harus lebih dari 0")
+    .max(100, "limit maksimal 100")
+    .catch(10),
+});

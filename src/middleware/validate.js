@@ -21,9 +21,9 @@ export const validate = (schema, source = "body") => {
     }
 
     if (source === "query") {
-      req.query = result.data;
+      Object.assign(req.query, result.data);
     } else if (source === "params") {
-      req.params = result.data;
+      Object.assign(req.params, result.data);
     } else {
       req.body = result.data;
     }

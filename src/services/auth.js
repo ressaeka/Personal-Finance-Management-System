@@ -73,36 +73,35 @@ export const getProfileService = async (id) => {
   };
 };
 
-export const updateProfileService = async (id, updateData) => {
+export const updateProfileService = async (id, body) => {
   const user = await findUserById(id);
 
   if (!user) {
     throw new AppError("User tidak ditemukan", 404);
   }
 
-  if (updateData.email) {
-    const existingEmail = await findUserByEmail(updateData.email);
+  if (body.email) {
+    const existingEmail = await findUserByEmail(body.email);
 
     if (existingEmail && existingEmail.id !== id) {
       throw new AppError("Email sudah terdaftar", 409);
     }
   }
 
-  if (updateData.username) {
-    const existingUsername = await findUserByUsername(updateData.username);
+  if (body.username) {
+    const existingUsername = await findUserByUsername(body.username);
 
     if (existingUsername && existingUsername.id !== id) {
       throw new AppError("Username sudah terdaftar", 409);
     }
   }
 
-  const updatedUser = await updateUserById(id, {
-    username: updateData.username ?? user.username,
-    email: updateData.email ?? user.email,
-    password: updateData.password
-      ? await hashPassword(updateData.password)
-      : user.password,
-  });
+  const updateData = {};
+  if (body.username) updateData.username = body.username;
+  if (body.email) updateData.email = body.email;
+  if (body.password) updateData.password = await hashPassword(body.password);
+
+  const updatedUser = await updateUserById(id, updateData);
 
   const { password, ...userWithoutPassword } = updatedUser;
 

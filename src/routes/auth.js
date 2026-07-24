@@ -1,6 +1,6 @@
 import express from "express";
 
-import authLimiter from "../middleware/rateLimit.js";
+import { authLimiter } from "../middleware/rateLimit.js";
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 

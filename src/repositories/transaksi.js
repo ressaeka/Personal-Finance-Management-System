@@ -88,10 +88,11 @@ export const countTransaksi = (userId) => {
 };
 
 
-export const updateTransaksi = (id, data) => {
+export const updateTransaksi = (id, userId, data) => {
   return prisma.transaksi.update({
     where: {
       id,
+      userId,
     },
     data,
     select: {
@@ -112,10 +113,11 @@ export const updateTransaksi = (id, data) => {
 };
 
 
-export const deleteTransaksi = (id) => {
+export const deleteTransaksi = (id, userId) => {
   return prisma.transaksi.update({
     where: {
       id,
+      userId,
     },
     data: {
       isDeleted: true,

@@ -140,7 +140,7 @@ export const updateTransaksiService = async (
     updateData.tanggal = transaksiData.tanggal;
   }
 
-  return updateTransaksi(transaksiId, updateData);
+  return updateTransaksi(transaksiId, userId, updateData);
 };
 
 export const deleteTransaksiService = async (
@@ -157,5 +157,5 @@ export const deleteTransaksiService = async (
     throw new AppError("Transaksi tidak ditemukan", 404);
   }
 
-  return deleteTransaksi(transaksiId);
+  return deleteTransaksi(transaksiId, userId);
 };

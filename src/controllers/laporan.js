@@ -5,7 +5,7 @@ export const getLaporan = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
-    const { categoryId, startDate, endDate, page, limit } = req.query;
+    const { categoryId, startDate, endDate, page, limit, tipe } = req.query;
 
     const laporan = await getLaporanService(userId, {
       categoryId,
@@ -13,6 +13,7 @@ export const getLaporan = async (req, res, next) => {
       endDate,
       page,
       limit,
+      tipe,
     });
 
     return successResponse(

@@ -1,6 +1,5 @@
 import prisma from "../config/prisma.js";
 
-
 export const createCategory = (data) => {
   return prisma.category.create({
     data,
@@ -12,7 +11,6 @@ export const createCategory = (data) => {
     },
   });
 };
-
 
 export const findCategoryById = (where) => {
   return prisma.category.findFirst({
@@ -26,7 +24,6 @@ export const findCategoryById = (where) => {
     },
   });
 };
-
 
 export const findAllCategory = ({ userId, skip, take }) => {
   return prisma.category.findMany({
@@ -48,7 +45,6 @@ export const findAllCategory = ({ userId, skip, take }) => {
   });
 };
 
-
 export const countCategory = (userId) => {
   return prisma.category.count({
     where: {
@@ -58,8 +54,7 @@ export const countCategory = (userId) => {
   });
 };
 
-
-export const findCategoryByName = ( userId, nameCategory ) => {
+export const findCategoryByName = (userId, nameCategory) => {
   return prisma.category.findFirst({
     where: {
       userId,
@@ -74,11 +69,47 @@ export const findCategoryByName = ( userId, nameCategory ) => {
   });
 };
 
+// Cari termasuk yang sudah dihapus
+export const findCategoryByNameIncludeDeleted = (userId, nameCategory) => {
+  return prisma.category.findFirst({
+    where: {
+      userId,
+      nameCategory,
+    },
+    select: {
+      id: true,
+      nameCategory: true,
+      tipe: true,
+      isDeleted: true,
+    },
+  });
+};
 
-export const updateCategory = (id, data) => {
+// Restore kategori
+export const restoreCategory = (id, tipe) => {
   return prisma.category.update({
     where: {
       id,
+    },
+    data: {
+      tipe,
+      isDeleted: false,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      nameCategory: true,
+      tipe: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export const updateCategory = (id, userId, data) => {
+  return prisma.category.update({
+    where: {
+      id,
+      userId,
     },
     data,
     select: {
@@ -90,11 +121,11 @@ export const updateCategory = (id, data) => {
   });
 };
 
-
-export const deleteCategory = (id) => {
+export const deleteCategory = (id, userId) => {
   return prisma.category.update({
     where: {
       id,
+      userId,
     },
     data: {
       isDeleted: true,
