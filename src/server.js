@@ -9,10 +9,16 @@ const server = app.listen(PORT, "0.0.0.0", () => {
 
 const shutdown = async () => {
   console.log("Shutting down gracefully...");
+
   server.close(async () => {
-    await prisma.$disconnect();
-    console.log("Process terminated.");
-    process.exit(0);
+    try {
+      await prisma.$disconnect();
+      console.log("Database disconnected.");
+      process.exit(0);
+    } catch (err) {
+      console.error("Shutdown failed:", err);
+      process.exit(1);
+    }
   });
 };
 
