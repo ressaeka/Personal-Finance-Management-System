@@ -19,7 +19,7 @@ export const globalLimiter = isTest
   ? (req, res, next) => next()
   : rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 100, // 100 requests per 15 minutes for general routes
+      max: 100, 
       message: {
         status: 'error',
         message: 'Terlalu banyak permintaan, coba lagi nanti',
