@@ -1,0 +1,117 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          format: password
+          example: StrongPass123!
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: john_doe
+        password:
+          type: string
+          format: password
+          example: StrongPass123!
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john_doe_updated
+        email:
+          type: string
+          format: email
+          example: john_updated@example.com
+        password:
+          type: string
+          format: password
+          example: NewStrongPass123!
+
+    CreateCategoryRequest:
+      type: object
+      required:
+        - nameCategory
+        - tipe
+      properties:
+        nameCategory:
+          type: string
+          example: Makanan
+        tipe:
+          type: string
+          enum: [PEMASUKAN, PENGELUARAN]
+          example: PENGELUARAN
+
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        nameCategory:
+          type: string
+          example: Minuman
+        tipe:
+          type: string
+          enum: [PEMASUKAN, PENGELUARAN]
+          example: PENGELUARAN
+
+    CreateTransactionRequest:
+      type: object
+      required:
+        - categoryId
+        - jumlah
+      properties:
+        categoryId:
+          type: integer
+          example: 1
+        jumlah:
+          type: number
+          example: 50000
+        deskripsi:
+          type: string
+          example: Makan siang
+        tanggal:
+          type: string
+          format: date
+          example: "2023-10-27"
+
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          example: 1
+        jumlah:
+          type: number
+          example: 75000
+        deskripsi:
+          type: string
+          example: Makan malam
+        tanggal:
+          type: string
+          format: date
+          example: "2023-10-27"

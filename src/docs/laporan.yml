@@ -1,0 +1,23 @@
+paths:
+  /api/v1/laporan:
+    get:
+      tags:
+        - Laporan
+      summary: Get laporan
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+
+        - in: query
+          name: limit
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: Data laporan
