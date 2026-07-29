@@ -1,7 +1,8 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
-  definition: {
+  definition:
+  {
     openapi: "3.0.0",
 
     info: {
@@ -10,13 +11,12 @@ const options = {
       description: "Personal Finance Management REST API",
     },
 
-    servers: [
-      {
-        url: "http://localhost:3000/api/v1",
-        description: "Development Server",
-      },
-    ],
-
+  servers: [
+    {
+      url: process.env.API_URL,
+      description: "API Server",
+    },
+  ],
     components: {
       securitySchemes: {
         bearerAuth: {
