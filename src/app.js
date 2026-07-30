@@ -40,8 +40,9 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/category", category);
 app.use("/api/v1/transaksi", transaksi);
 app.use("/api/v1/laporan", laporan);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 // --- 404 CATCH-ALL ---
 app.use((req, res, next) => {
   next(new AppError(`Route ${req.method} ${req.originalUrl} tidak ditemukan`, 404));

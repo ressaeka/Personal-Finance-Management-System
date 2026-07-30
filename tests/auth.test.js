@@ -1,13 +1,25 @@
 import { prisma, app } from "./helpers/setup.js";
 import supertest from "supertest";
+import jwt from "jsonwebtoken";
 
 const request = supertest(app);
+
+const JWT_RESET_SECRET = process.env.JWT_RESET_SECRET || process.env.JWT_SECRET;
 
 const testUser = {
   username: "testuser",
   email: "test@example.com",
   password: "Test123!",
 };
+
+const secondUser = {
+  username: "otheruser",
+  email: "other@example.com",
+  password: "Test123!",
+};
+
+const generateResetToken = (payload) =>
+  jwt.sign(payload, JWT_RESET_SECRET, { expiresIn: "15m" });
 
 describe("POST /api/v1/auth/register", () => {
   afterEach(async () => {
@@ -253,5 +265,196 @@ describe("POST /api/v1/auth/refresh", () => {
       .send({});
 
     expect(res.status).toBe(400);
+  });
+});
+
+describe("POST /api/v1/auth/forgot-password", () => {
+  let token;
+
+  beforeEach(async () => {
+    await request.post("/api/v1/auth/register").send(testUser);
+    const login = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: testUser.password,
+    });
+    token = login.body.data.accessToken;
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  it("should accept valid email and return success", async () => {
+    const res = await request
+      .post("/api/v1/auth/forgot-password")
+      .send({ email: testUser.email });
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("success");
+  });
+
+  it("should reject non-existent email", async () => {
+    const res = await request
+      .post("/api/v1/auth/forgot-password")
+      .send({ email: "nonexistent@test.com" });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("should reject invalid email format", async () => {
+    const res = await request
+      .post("/api/v1/auth/forgot-password")
+      .send({ email: "notanemail" });
+
+    expect(res.status).toBe(400);
+  });
+
+  it("should reject empty body", async () => {
+    const res = await request
+      .post("/api/v1/auth/forgot-password")
+      .send({});
+
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("POST /api/v1/auth/reset-password", () => {
+  let userId;
+
+  beforeEach(async () => {
+    const reg = await request.post("/api/v1/auth/register").send(testUser);
+    userId = reg.body.data.id;
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  it("should reset password with valid token", async () => {
+    const token = generateResetToken({
+      id: userId,
+      email: testUser.email,
+    });
+
+    const res = await request
+      .post("/api/v1/auth/reset-password")
+      .send({ token, password: "NewPass123!" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("success");
+  });
+
+  it("should allow login with new password after reset", async () => {
+    const token = generateResetToken({
+      id: userId,
+      email: testUser.email,
+    });
+
+    await request
+      .post("/api/v1/auth/reset-password")
+      .send({ token, password: "NewPass123!" });
+
+    const loginRes = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: "NewPass123!",
+    });
+
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.data.accessToken).toBeDefined();
+  });
+
+  it("should reject login with old password after reset", async () => {
+    const token = generateResetToken({
+      id: userId,
+      email: testUser.email,
+    });
+
+    await request
+      .post("/api/v1/auth/reset-password")
+      .send({ token, password: "NewPass123!" });
+
+    const loginRes = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: testUser.password,
+    });
+
+    expect(loginRes.status).toBe(401);
+  });
+
+  it("should reject invalid token", async () => {
+    const res = await request
+      .post("/api/v1/auth/reset-password")
+      .send({ token: "invalidtoken", password: "NewPass123!" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("should reject weak password", async () => {
+    const token = generateResetToken({
+      id: userId,
+      email: testUser.email,
+    });
+
+    const res = await request
+      .post("/api/v1/auth/reset-password")
+      .send({ token, password: "12345678" });
+
+    expect(res.status).toBe(400);
+  });
+
+  it("should reject empty body", async () => {
+    const res = await request
+      .post("/api/v1/auth/reset-password")
+      .send({});
+
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("Profile password change revokes sessions", () => {
+  let token;
+  let refreshToken;
+
+  beforeEach(async () => {
+    await request.post("/api/v1/auth/register").send(testUser);
+    const login = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: testUser.password,
+    });
+    token = login.body.data.accessToken;
+    refreshToken = login.body.data.refreshToken;
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  it("should allow login with new password after profile password change", async () => {
+    await request
+      .put("/api/v1/auth/profile")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ password: "NewPass123!" });
+
+    const loginRes = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: "NewPass123!",
+    });
+
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.data.accessToken).toBeDefined();
+  });
+
+  it("should reject login with old password after profile password change", async () => {
+    await request
+      .put("/api/v1/auth/profile")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ password: "NewPass123!" });
+
+    const loginRes = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: testUser.password,
+    });
+
+    expect(loginRes.status).toBe(401);
   });
 });

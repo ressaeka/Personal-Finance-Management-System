@@ -189,7 +189,12 @@ export const resetPasswordService = async (
   token,
   password
 ) => {
-  const decoded = verifyResetToken(token);
+  let decoded;
+  try {
+    decoded = verifyResetToken(token);
+  } catch {
+    throw new AppError("Token reset password tidak valid atau sudah kadaluarsa", 401);
+  }
 
   const user = await findUserById(decoded.id);
 
