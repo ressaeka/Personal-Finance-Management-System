@@ -1,7 +1,8 @@
 import { createUser, findUserByEmail, findUserById, findUserByUsername, updateUserById } from "../repositories/auth.js";
-import { generateToken } from "../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
 import { AppError } from "../utils/appError.js";
+import { setRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/refreshToken.js";
 
 export const registerService = async (userData) => {
   const existingEmail = await findUserByEmail(userData.email);
@@ -42,20 +43,52 @@ export const loginService = async ({ username, password }) => {
     throw new AppError("Username atau password salah", 401);
   }
 
-  const token = generateToken({
-    id: user.id,
-    username: user.username,
-    email: user.email,
-  });
+  const payload = { id: user.id, username: user.username, email: user.email };
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload);
+
+  await setRefreshToken(user.id, refreshToken);
 
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: {
       id: user.id,
       username: user.username,
       email: user.email,
     },
   };
+};
+
+export const refreshTokenService = async (refreshToken) => {
+  let decoded;
+  try {
+    const decoded = verifyRefreshToken(refreshToken);
+  } catch {
+    throw new AppError("Refresh token tidak valid atau sudah digunakan", 401);
+  }
+
+  const storedUserId = await getRefreshToken(refreshToken);
+
+  if (!storedUserId || String(storedUserId) !== String(decoded.id)) {
+    throw new AppError("Refresh token tidak valid atau sudah digunakan", 401);
+  }
+
+  await deleteRefreshToken(refreshToken);
+
+  const payload = { id: decoded.id, username: decoded.username, email: decoded.email };
+  const newAccessToken = generateAccessToken(payload);
+  const newRefreshToken = generateRefreshToken(payload);
+
+  await setRefreshToken(decoded.id, newRefreshToken);
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+};
+
+export const logoutService = async (userId, refreshToken) => {
+  if (refreshToken) {
+    await deleteRefreshToken(refreshToken);
+  }
 };
 
 export const getProfileService = async (id) => {

@@ -79,7 +79,8 @@ describe("POST /api/v1/auth/login", () => {
     });
 
     expect(res.status).toBe(200);
-    expect(res.body.data.token).toBeDefined();
+    expect(res.body.data.accessToken).toBeDefined();
+    expect(res.body.data.refreshToken).toBeDefined();
     expect(res.body.data.user.username).toBe("testuser");
   });
 
@@ -111,7 +112,7 @@ describe("GET /api/v1/auth/profile", () => {
       username: testUser.username,
       password: testUser.password,
     });
-    token = login.body.data.token;
+    token = login.body.data.accessToken;
   });
 
   afterEach(async () => {
@@ -151,7 +152,7 @@ describe("PUT /api/v1/auth/profile", () => {
       username: testUser.username,
       password: testUser.password,
     });
-    token = login.body.data.token;
+    token = login.body.data.accessToken;
   });
 
   afterEach(async () => {
@@ -186,6 +187,7 @@ describe("PUT /api/v1/auth/profile", () => {
 
 describe("POST /api/v1/auth/logout", () => {
   let token;
+  let refreshToken;
 
   beforeEach(async () => {
     await request.post("/api/v1/auth/register").send(testUser);
@@ -193,19 +195,63 @@ describe("POST /api/v1/auth/logout", () => {
       username: testUser.username,
       password: testUser.password,
     });
-    token = login.body.data.token;
+    token = login.body.data.accessToken;
+    refreshToken = login.body.data.refreshToken;
   });
 
   afterEach(async () => {
     await prisma.user.deleteMany();
   });
 
-  it("should return logout instruction", async () => {
+  it("should logout successfully", async () => {
     const res = await request
       .post("/api/v1/auth/logout")
-      .set("Authorization", `Bearer ${token}`);
+      .set("Authorization", `Bearer ${token}`)
+      .send({ refreshToken });
 
     expect(res.status).toBe(200);
-    expect(res.body.data.instruction).toBeDefined();
+  });
+});
+
+describe("POST /api/v1/auth/refresh", () => {
+  let refreshToken;
+
+  beforeEach(async () => {
+    await request.post("/api/v1/auth/register").send(testUser);
+    const login = await request.post("/api/v1/auth/login").send({
+      username: testUser.username,
+      password: testUser.password,
+    });
+    refreshToken = login.body.data.refreshToken;
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  it("should return new tokens", async () => {
+    const res = await request
+      .post("/api/v1/auth/refresh")
+      .send({ refreshToken });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.accessToken).toBeDefined();
+    expect(res.body.data.refreshToken).toBeDefined();
+  });
+
+  it("should reject invalid refresh token", async () => {
+    const res = await request
+      .post("/api/v1/auth/refresh")
+      .send({ refreshToken: "invalidtoken" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("should reject empty body", async () => {
+    const res = await request
+      .post("/api/v1/auth/refresh")
+      .send({});
+
+    expect(res.status).toBe(400);
   });
 });

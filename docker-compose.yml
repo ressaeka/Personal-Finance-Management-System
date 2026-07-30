@@ -1,5 +1,4 @@
 services:
-
   app:
     container_name: kps-backend
 
@@ -17,6 +16,17 @@ services:
       - .:/app
       - /app/node_modules
 
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: kps-redis
+
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
 
   cloudflared:
     image: cloudflare/cloudflared:latest

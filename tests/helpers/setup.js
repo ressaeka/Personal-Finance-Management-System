@@ -10,7 +10,7 @@ const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {
   execSync("npx prisma db push --force-reset", {
-    env: { ...process.env, DATABASE_URL: databaseUrl, NODE_ENV: "test" },
+    env: { ...process.env, DATABASE_URL: databaseUrl, DIRECT_URL: databaseUrl, NODE_ENV: "test" },
     stdio: "pipe",
   });
 });

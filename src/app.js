@@ -1,11 +1,11 @@
 import express from "express";
-import dotenv from "dotenv";
 import auth from "./routes/auth.js";
 import category from "./routes/category.js";
 import transaksi from "./routes/transaksi.js";
 import laporan from "./routes/laporan.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import dotenv from "dotenv";
 
 // Memuat variabel lingkungan dari file .env
 dotenv.config();
@@ -18,6 +18,8 @@ import { globalLimiter } from "./middleware/rateLimit.js";
 import { AppError } from "./utils/appError.js";
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 // --- GLOBAL MIDDLEWARES ---
 app.use(corsMiddleware);

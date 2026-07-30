@@ -10,12 +10,13 @@ const options = {
       version: "1.0.0",
       description: "Personal Finance Management REST API",
     },
-
+    
   servers: [
     {
-      url: process.env.API_URL,
-      description: "API Server",
+      url: "/",
+      description: "Current Server",
     },
+
   ],
     components: {
       securitySchemes: {

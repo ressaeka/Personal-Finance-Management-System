@@ -15,7 +15,7 @@ beforeAll(async () => {
     username: "catuser",
     password: "Test123!",
   });
-  token = login.body.data.token;
+  token = login.body.data.accessToken;
 });
 
 afterAll(async () => {

@@ -17,7 +17,7 @@ beforeAll(async () => {
     username: "laporuser",
     password: "Test123!",
   });
-  token = login.body.data.token;
+  token = login.body.data.accessToken;
 
   const income = await request
     .post("/api/v1/category")

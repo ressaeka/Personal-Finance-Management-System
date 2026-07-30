@@ -15,11 +15,11 @@ components:
       properties:
         username:
           type: string
-          example: john_doe
+          example: ressa
         email:
           type: string
           format: email
-          example: john@example.com
+          example: ressa@gmail.com
         password:
           type: string
           format: password
@@ -33,7 +33,7 @@ components:
       properties:
         username:
           type: string
-          example: john_doe
+          example: ressa
         password:
           type: string
           format: password
@@ -44,11 +44,11 @@ components:
       properties:
         username:
           type: string
-          example: john_doe_updated
+          example: Reysa Eka Saputra
         email:
           type: string
           format: email
-          example: john_updated@example.com
+          example: reysaekasaputra@gmail.com
         password:
           type: string
           format: password
@@ -115,3 +115,30 @@ components:
           type: string
           format: date
           example: "2023-10-27"
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: JWT Refresh Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    RefreshTokenResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Access token berhasil diperbarui
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: JWT Access Token baru
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
