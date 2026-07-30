@@ -1,8 +1,9 @@
 import { createUser, findUserByEmail, findUserById, findUserByUsername, updateUserById } from "../repositories/auth.js";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken,generateResetToken,verifyResetToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
 import { AppError } from "../utils/appError.js";
-import { setRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/refreshToken.js";
+import { setRefreshToken, getRefreshToken, deleteRefreshToken, revokeAllUserTokens } from "../services/refreshToken.js";
+import transporter from "../config/mailer.js";
 
 export const registerService = async (userData) => {
   const existingEmail = await findUserByEmail(userData.email);
@@ -63,7 +64,7 @@ export const loginService = async ({ username, password }) => {
 export const refreshTokenService = async (refreshToken) => {
   let decoded;
   try {
-    const decoded = verifyRefreshToken(refreshToken);
+    decoded = verifyRefreshToken(refreshToken);
   } catch {
     throw new AppError("Refresh token tidak valid atau sudah digunakan", 401);
   }
@@ -132,11 +133,75 @@ export const updateProfileService = async (id, body) => {
   const updateData = {};
   if (body.username) updateData.username = body.username;
   if (body.email) updateData.email = body.email;
-  if (body.password) updateData.password = await hashPassword(body.password);
+  if (body.password) {
+    updateData.password = await hashPassword(body.password);
+  }
 
   const updatedUser = await updateUserById(id, updateData);
+
+  if (body.password) {
+    await revokeAllUserTokens(id);
+  }
 
   const { password, ...userWithoutPassword } = updatedUser;
 
   return userWithoutPassword;
 };
+
+export const forgotPasswordService = async (email) => {
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    throw new AppError("Email tidak ditemukan", 404);
+  }
+
+  const token = generateResetToken({
+    id: user.id,
+    email: user.email,
+  });
+
+  const resetLink =
+    `http://localhost:5173/reset-password?token=${token}`;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: user.email,
+      subject: "Reset Password",
+      html: `
+        <h2>Reset Password</h2>
+
+        <p>Klik tombol berikut untuk reset password.</p>
+
+        <a href="${resetLink}">
+          Reset Password
+        </a>
+
+        <p>Link berlaku selama 15 menit.</p>
+      `,
+    });
+  } catch (err) {
+    console.error("Gagal kirim email:", err.message);
+  }
+};
+
+export const resetPasswordService = async (
+  token,
+  password
+) => {
+  const decoded = verifyResetToken(token);
+
+  const user = await findUserById(decoded.id);
+
+  if (!user) {
+    throw new AppError("User tidak ditemukan", 404);
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  await updateUserById(user.id, {
+    password: hashedPassword,
+  });
+
+  await revokeAllUserTokens(user.id);
+}

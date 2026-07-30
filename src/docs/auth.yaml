@@ -20,6 +20,7 @@ paths:
       tags:
         - Authentication
       summary: Login user
+      description: Login menggunakan username dan password.
       requestBody:
         required: true
         content:
@@ -35,44 +36,67 @@ paths:
       tags:
         - Authentication
       summary: Refresh access token
-      description: Menghasilkan access token baru menggunakan refresh token.
+      description: Menghasilkan access token dan refresh token baru menggunakan refresh token.
 
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - refreshToken
-              properties:
-                refreshToken:
-                  type: string
-                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              $ref: '#/components/schemas/RefreshTokenRequest'
 
       responses:
         '200':
-          description: Access token berhasil diperbarui
+          description: Token berhasil diperbarui
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  message:
-                    type: string
-                    example: Access token berhasil diperbarui
-                  data:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                $ref: '#/components/schemas/RefreshTokenResponse'
 
         '401':
           description: Refresh token tidak valid atau telah kedaluwarsa
+
+  /api/v1/auth/forgot-password:
+    post:
+      tags:
+        - Authentication
+      summary: Forgot password
+      description: Mengirim email berisi link reset password.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+
+      responses:
+        '200':
+          description: Email reset password berhasil dikirim
+
+        '404':
+          description: Email tidak ditemukan
+
+  /api/v1/auth/reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password
+      description: Mengubah password menggunakan reset token.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+
+      responses:
+        '200':
+          description: Password berhasil diubah
+
+        '400':
+          description: Token tidak valid atau sudah kedaluwarsa
 
   /api/v1/auth/profile:
     get:
@@ -108,8 +132,16 @@ paths:
       tags:
         - Authentication
       summary: Logout
+      description: Logout dan menghapus refresh token dari Redis.
       security:
         - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
 
       responses:
         '200':

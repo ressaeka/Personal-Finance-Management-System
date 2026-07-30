@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const STRONG_PASSWORD_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
 
 export const registerSchema = z.object({
   username: z
@@ -69,3 +68,26 @@ export const updateSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: "Minimal satu field harus diisi untuk update",
   });
+
+
+  export const forgotPasswordSchema = z.
+    object({
+      email: z
+        .string()
+        .email("Email tidak valid"),
+});
+
+export const resetPasswordSchema = z.
+  object({
+      token: z
+        .string()
+        .min(1, "Token wajib diisi"),
+
+      password: z
+        .string()
+        .min(8, "Password minimal 8 karakter")
+        .regex(
+          STRONG_PASSWORD_REGEX,
+          "Password harus mengandung huruf kecil, huruf besar, angka, dan simbol"
+    ),
+});

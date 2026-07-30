@@ -1,4 +1,4 @@
-import { registerService, loginService, refreshTokenService, logoutService, getProfileService, updateProfileService } from "../services/auth.js";
+import { registerService, loginService, refreshTokenService, logoutService, getProfileService, forgotPasswordService, resetPasswordService, updateProfileService } from "../services/auth.js";
 import { setRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/refreshToken.js";
 import { successResponse } from "../utils/response.js";
 
@@ -60,6 +60,37 @@ export const updateProfile = async (req, res, next) => {
     );
 
     return successResponse( res, result, "Berhasil memperbarui data user");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    await forgotPasswordService(req.body.email);
+
+    return successResponse(
+      res,
+      null,
+      "Link reset password berhasil dikirim"
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    await resetPasswordService(
+      req.body.token,
+      req.body.password
+    );
+
+    return successResponse(
+      res,
+      null,
+      "Password berhasil diperbarui"
+    );
   } catch (err) {
     next(err);
   }

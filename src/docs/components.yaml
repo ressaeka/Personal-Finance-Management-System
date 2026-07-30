@@ -54,68 +54,6 @@ components:
           format: password
           example: NewStrongPass123!
 
-    CreateCategoryRequest:
-      type: object
-      required:
-        - nameCategory
-        - tipe
-      properties:
-        nameCategory:
-          type: string
-          example: Makanan
-        tipe:
-          type: string
-          enum: [PEMASUKAN, PENGELUARAN]
-          example: PENGELUARAN
-
-    UpdateCategoryRequest:
-      type: object
-      properties:
-        nameCategory:
-          type: string
-          example: Minuman
-        tipe:
-          type: string
-          enum: [PEMASUKAN, PENGELUARAN]
-          example: PENGELUARAN
-
-    CreateTransactionRequest:
-      type: object
-      required:
-        - categoryId
-        - jumlah
-      properties:
-        categoryId:
-          type: integer
-          example: 1
-        jumlah:
-          type: number
-          example: 50000
-        deskripsi:
-          type: string
-          example: Makan siang
-        tanggal:
-          type: string
-          format: date
-          example: "2023-10-27"
-
-    UpdateTransactionRequest:
-      type: object
-      properties:
-        categoryId:
-          type: integer
-          example: 1
-        jumlah:
-          type: number
-          example: 75000
-        deskripsi:
-          type: string
-          example: Makan malam
-        tanggal:
-          type: string
-          format: date
-          example: "2023-10-27"
-
     RefreshTokenRequest:
       type: object
       required:
@@ -132,9 +70,11 @@ components:
         status:
           type: string
           example: success
+
         message:
           type: string
-          example: Access token berhasil diperbarui
+          example: Token berhasil diperbarui
+
         data:
           type: object
           properties:
@@ -142,3 +82,108 @@ components:
               type: string
               description: JWT Access Token baru
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+            refreshToken:
+              type: string
+              description: JWT Refresh Token baru
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: ressa@gmail.com
+
+    ResetPasswordRequest:
+      type: object
+      required:
+        - token
+        - password
+      properties:
+        token:
+          type: string
+          description: JWT Reset Password Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+        password:
+          type: string
+          format: password
+          example: NewStrongPass123!
+
+    CreateCategoryRequest:
+      type: object
+      required:
+        - nameCategory
+        - tipe
+      properties:
+        nameCategory:
+          type: string
+          example: Makanan
+
+        tipe:
+          type: string
+          enum:
+            - PEMASUKAN
+            - PENGELUARAN
+          example: PENGELUARAN
+
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        nameCategory:
+          type: string
+          example: Minuman
+
+        tipe:
+          type: string
+          enum:
+            - PEMASUKAN
+            - PENGELUARAN
+          example: PENGELUARAN
+
+    CreateTransactionRequest:
+      type: object
+      required:
+        - categoryId
+        - jumlah
+      properties:
+        categoryId:
+          type: integer
+          example: 1
+
+        jumlah:
+          type: number
+          example: 50000
+
+        deskripsi:
+          type: string
+          example: Makan siang
+
+        tanggal:
+          type: string
+          format: date
+          example: "2026-07-30"
+
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          example: 1
+
+        jumlah:
+          type: number
+          example: 75000
+
+        deskripsi:
+          type: string
+          example: Makan malam
+
+        tanggal:
+          type: string
+          format: date
+          example: "2026-07-30"
