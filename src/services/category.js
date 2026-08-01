@@ -35,10 +35,7 @@ export const createCategoryService = async (userId, body) => {
   });
 };
 
-export const getAllCategoryService = async (
-  userId,
-  { page = 1, limit = 50 }
-) => {
+export const getAllCategoryService = async ( userId, { page = 1, limit = 50 } ) => {
   page = Number(page);
   limit = Number(limit);
 
@@ -78,11 +75,7 @@ export const getCategoryByIdService = async (categoryId, userId) => {
   return category;
 };
 
-export const updateCategoryService = async (
-  categoryId,
-  userId,
-  body
-) => {
+export const updateCategoryService = async ( categoryId, userId, body ) => {
   const category = await findCategoryById({
     id: categoryId,
     userId,

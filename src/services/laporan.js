@@ -6,17 +6,7 @@ import {
 } from "../repositories/laporan.js";
 import { AppError } from "../utils/appError.js";
 
-export const getLaporanService = async (
-  userId,
-  {
-    categoryId,
-    startDate,
-    endDate,
-    page = 1,
-    limit = 10,
-    tipe,
-  } = {}
-) => {
+export const getLaporanService = async ( userId, { categoryId, startDate, endDate, page = 1, limit = 10, tipe, } = {} ) => {
   if (!userId) {
     throw new AppError("User tidak ditemukan", 401);
   }
@@ -52,12 +42,7 @@ export const getLaporanService = async (
     }
   }
 
-  const [
-    transactions,
-    totalData,
-    summary,
-    categorySummary,
-  ] = await Promise.all([
+  const [ transactions, totalData, summary, categorySummary ] = await Promise.all([
     findTransactions({
       where,
       skip,
