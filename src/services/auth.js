@@ -152,7 +152,7 @@ export const forgotPasswordService = async (email) => {
   const user = await findUserByEmail(email);
 
   if (!user) {
-    throw new AppError("Email tidak ditemukan", 404);
+    return;
   }
 
   const token = generateResetToken({
@@ -160,8 +160,9 @@ export const forgotPasswordService = async (email) => {
     email: user.email,
   });
 
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
   const resetLink =
-    `http://localhost:5173/reset-password?token=${token}`;
+    `${frontendUrl}/reset-password?token=${token}`;
 
   try {
     await transporter.sendMail({

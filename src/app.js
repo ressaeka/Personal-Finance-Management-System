@@ -5,6 +5,7 @@ import transaksi from "./routes/transaksi.js";
 import laporan from "./routes/laporan.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import basicAuth from "express-basic-auth";
 import dotenv from "dotenv";
 
 // Memuat variabel lingkungan dari file .env
@@ -35,14 +36,27 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+const enableSwagger = process.env.ENABLE_SWAGGER === "true";
+
 // --- API ROUTES (V1) ---
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/category", category);
 app.use("/api/v1/transaksi", transaksi);
 app.use("/api/v1/laporan", laporan);
-if (process.env.NODE_ENV !== "production") {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+if (enableSwagger) {
+  app.use(
+    "/api-docs",
+    basicAuth({
+      users: {
+        [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+      },
+      challenge: true,
+    }),
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+  );
 }
+
 // --- 404 CATCH-ALL ---
 app.use((req, res, next) => {
   next(new AppError(`Route ${req.method} ${req.originalUrl} tidak ditemukan`, 404));

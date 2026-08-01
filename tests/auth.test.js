@@ -293,12 +293,12 @@ describe("POST /api/v1/auth/forgot-password", () => {
     expect(res.body.status).toBe("success");
   });
 
-  it("should reject non-existent email", async () => {
+  it("should return success for non-existent email (no enumeration)", async () => {
     const res = await request
       .post("/api/v1/auth/forgot-password")
       .send({ email: "nonexistent@test.com" });
 
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(200);
   });
 
   it("should reject invalid email format", async () => {
