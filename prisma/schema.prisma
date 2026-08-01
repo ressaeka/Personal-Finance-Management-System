@@ -45,6 +45,9 @@ model Category {
   transactions Transaksi[]
 
   @@unique([userId, nameCategory])
+
+  @@index([userId])
+  @@index([userId, isDeleted])
 }
 
 model Transaksi {
@@ -63,4 +66,9 @@ model Transaksi {
 
   @@index([userId, createdAt])
   @@index([categoryId])
+  @@index([userId, isDeleted])
+  @@index([userId, tanggal])
+  @@index([categoryId, isDeleted])
+
+
 }
