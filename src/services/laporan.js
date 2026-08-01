@@ -4,7 +4,6 @@ import {
   aggregateTransactions,
   groupByCategory,
 } from "../repositories/laporan.js";
-
 import { AppError } from "../utils/appError.js";
 
 export const getLaporanService = async (
@@ -16,11 +15,15 @@ export const getLaporanService = async (
     page = 1,
     limit = 10,
     tipe,
-  }
+  } = {}
 ) => {
   if (!userId) {
     throw new AppError("User tidak ditemukan", 401);
   }
+
+  const pageNumber = Math.max(1, Number(page) || 1);
+  const limitNumber = Math.max(1, Number(limit) || 10);
+  const skip = (pageNumber - 1) * limitNumber;
 
   const where = {
     userId,
@@ -33,18 +36,21 @@ export const getLaporanService = async (
 
   if (tipe) {
     where.category = {
-      tipe: tipe,
+      tipe,
     };
   }
 
-  if (startDate && endDate) {
-    where.tanggal = {
-      gte: new Date(startDate),
-      lte: new Date(endDate),
-    };
-  }
+  if (startDate || endDate) {
+    where.tanggal = {};
 
-  const skip = (page - 1) * limit;
+    if (startDate) {
+      where.tanggal.gte = new Date(startDate);
+    }
+
+    if (endDate) {
+      where.tanggal.lte = new Date(endDate);
+    }
+  }
 
   const [
     transactions,
@@ -55,7 +61,7 @@ export const getLaporanService = async (
     findTransactions({
       where,
       skip,
-      take: Number(limit),
+      take: limitNumber,
     }),
 
     countTransactions(where),
@@ -77,10 +83,10 @@ export const getLaporanService = async (
     categorySummary,
 
     pagination: {
-      page: Number(page),
-      limit: Number(limit),
+      page: pageNumber,
+      limit: limitNumber,
       totalData,
-      totalPage: Math.ceil(totalData / limit),
+      totalPages: Math.ceil(totalData / limitNumber),
     },
 
     transactions,
