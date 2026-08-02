@@ -19,7 +19,8 @@ export const globalLimiter = isTest
   ? (req, res, next) => next()
   : rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 100, 
+      max: 100,
+      skip: (req) => req.path === "/health",
       message: {
         status: 'error',
         message: 'Terlalu banyak permintaan, coba lagi nanti',

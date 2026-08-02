@@ -3,9 +3,13 @@ import auth from "./routes/auth.js";
 import category from "./routes/category.js";
 import transaksi from "./routes/transaksi.js";
 import laporan from "./routes/laporan.js";
+import health from "./routes/health.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 import basicAuth from "express-basic-auth";
+import logger from "./config/logger.js";
+import httpLogger from "./middleware/logger.js";
+
 import dotenv from "dotenv";
 
 // Memuat variabel lingkungan dari file .env
@@ -20,7 +24,11 @@ import { AppError } from "./utils/appError.js";
 
 const app = express();
 
+app.use(httpLogger);
+logger.info("Server starting...");
+
 app.set("trust proxy", 1);
+
 
 // --- GLOBAL MIDDLEWARES ---
 app.use(corsMiddleware);
@@ -32,17 +40,14 @@ app.use(express.json({
 
 
 // --- HEALTH CHECK ---
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
-const enableSwagger = process.env.ENABLE_SWAGGER === "true";
+app.use("/health", health);
 
 // --- API ROUTES (V1) ---
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/category", category);
 app.use("/api/v1/transaksi", transaksi);
 app.use("/api/v1/laporan", laporan);
+const enableSwagger = process.env.ENABLE_SWAGGER === "true";
 if (enableSwagger) {
   app.use(
     "/api-docs",
