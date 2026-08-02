@@ -75,7 +75,17 @@ npx prisma generate
 npx prisma db push
 ```
 
-### 4. Jalankan server
+### 4. Seed data awal (opsional)
+
+Mengisi user admin + kategori + transaksi contoh (idempotent, aman dijalankan ulang):
+
+```bash
+npm run db:seed
+```
+
+Akun default: `admin` / `Admin123!`
+
+### 5. Jalankan server
 
 ```bash
 npm run dev
@@ -83,7 +93,7 @@ npm run dev
 
 Server berjalan di `http://localhost:3000`. Cek status: `GET /health`.
 
-### 5. Menjalankan test
+### 6. Menjalankan test
 
 ```bash
 npm test
