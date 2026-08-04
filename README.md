@@ -8,18 +8,20 @@ Dibangun dengan arsitektur **layered (Route → Controller → Service → Repos
 
 ## Tech Stack
 
-| Layer                 | Teknologi                                    |
-| --------------------- | -------------------------------------------- |
-| Runtime               | Node.js 22 (ES Modules)                      |
-| Framework             | Express 5                                    |
-| Database              | PostgreSQL + Prisma ORM 7                    |
-| Cache / Refresh Token | Redis (ioredis)                              |
-| Autentikasi           | JWT (access + refresh token)                 |
-| Validasi              | Zod 4                                        |
-| Logging               | Pino + pino-http (dengan redaction otomatis) |
-| Testing               | Jest + Supertest (182 test)                  |
-| Dokumentasi API       | Swagger UI                                   |
-| Deployment            | Docker (dev & prod) + docker-compose         |
+| Layer                 | Teknologi                                     |
+| --------------------- | --------------------------------------------- |
+| Runtime               | Node.js 22 (ES Modules)                       |
+| Framework             | Express 5                                     |
+| Database              | PostgreSQL + Prisma ORM 7                     |
+| Cache / Refresh Token | Redis (ioredis)                               |
+| Autentikasi           | JWT (access + refresh token)                  |
+| Validasi              | Zod 4                                         |
+| Logging               | Pino + pino-http (dengan redaction otomatis)  |
+| Testing               | Jest + Supertest (182 test, 19 suite)         |
+| Lint & Format         | ESLint 10 + Prettier 3                        |
+| CI/CD                 | GitHub Actions (lint, format, test, coverage) |
+| Dokumentasi API       | Swagger UI                                    |
+| Deployment            | Docker (dev & prod) + docker-compose          |
 
 ## Fitur
 
@@ -213,13 +215,33 @@ Semua request ke endpoint bisnis wajib membawa header `Authorization: Bearer <ac
 
 ## Testing
 
-57 test dalam 5 suite (Jest + Supertest):
+182 test dalam 19 suite (Jest + Supertest):
 
 ```
 npm test          # jalankan sekali
 npm run test:watch
-npm run coverage
+npm run coverage  # test + laporan coverage (threshold: lines 80%, branches 70%)
 ```
+
+## Lint & Format
+
+```bash
+npm run lint          # cek lint (ESLint)
+npm run lint:fix      # perbaiki otomatis
+npm run format        # format semua file (Prettier)
+npm run format:check  # cek formatting
+```
+
+## CI/CD
+
+GitHub Actions (`.github/workflows/ci.yml`) berjalan di setiap push/PR ke `main`:
+
+1. Install dependensi + generate Prisma client
+2. Migrate database (PostgreSQL service container)
+3. Lint + format check
+4. Test lengkap dengan coverage report (di-upload sebagai artifact)
+
+Badge status: lihat bagian atas README ini.
 
 ## Docker
 
