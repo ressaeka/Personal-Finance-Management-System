@@ -17,7 +17,7 @@ export const healthCheck = async (req, res) => {
     checks.database = "up";
   } catch (err) {
     healthy = false;
-    logger.error(`Health check database failed: ${err.message}`);
+    logger.error({ err }, "Database health check failed");  
   }
 
   if (redis) {
@@ -26,15 +26,18 @@ export const healthCheck = async (req, res) => {
       checks.redis = "up";
     } catch (err) {
       healthy = false;
-      logger.error(`Health check redis failed: ${err.message}`);
+      logger.error({ err }, "Health check redis failed");
     }
   } else {
     checks.redis = "not configured";
   }
 
   const statusCode = healthy ? 200 : 503;
-  res.status(statusCode).json({
+  return res.status(statusCode).json({
     status: healthy ? "ok" : "degraded",
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV,
+    version: process.env.npm_package_version,
     checks,
     timestamp: new Date().toISOString(),
   });

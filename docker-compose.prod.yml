@@ -4,17 +4,13 @@ services:
 
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
 
     ports:
       - "3000:3000"
 
     env_file:
       - .env
-
-    volumes:
-      - .:/app
-      - /app/node_modules
 
     depends_on:
       redis:
@@ -37,9 +33,6 @@ services:
 
     restart: unless-stopped
 
-    ports:
-      - "6379:6379"
-
     volumes:
       - redis-data:/data
 
@@ -52,24 +45,9 @@ services:
     networks:
       - backend
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: kps-cloudflared
-
-    command: tunnel --no-autoupdate --url http://app:3000
-
-    depends_on:
-      app:
-        condition: service_healthy
-
-    restart: unless-stopped
-
-    networks:
-      - backend
-
-volumes:
-  redis-data:
-
 networks:
   backend:
     driver: bridge
+
+volumes:
+  redis-data:

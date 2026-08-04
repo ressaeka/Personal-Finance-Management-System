@@ -41,7 +41,20 @@
     "testMatch": [
       "**/tests/**/*.test.js"
     ],
-    "verbose": true
+    "verbose": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "functions": 80,
+        "branches": 70,
+        "statements": 80
+      }
+    }
   },
   "devDependencies": {
     "jest": "^30.4.2",

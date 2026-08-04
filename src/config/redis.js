@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import logger from "./logger.js";
 
 const isTest = process.env.NODE_ENV === "test";
 
@@ -19,11 +20,11 @@ if (!isTest) {
   });
 
   redis.on("connect", () => {
-    console.log("Redis Connected");
+      logger.info("Redis Connected");
   });
 
   redis.on("error", (err) => {
-    console.error("Redis Error:", err.message);
+      logger.error(err, "Redis Error");
   });
 }
 

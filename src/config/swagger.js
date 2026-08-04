@@ -1,33 +1,50 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
-  definition:
-  {
+  definition: {
     openapi: "3.0.0",
 
     info: {
       title: "KPS Tracking API",
       version: "1.0.0",
       description: "Personal Finance Management REST API",
-    },
-    
-  servers: [
-    {
-      url: "/",
-      description: "Current Server",
+      contact: {
+        name: "Reysa Eka Saputra",
+      },
     },
 
-  ],
+    servers: [
+      {
+        url: process.env.API_URL || "http://localhost:3000",
+        description:
+          process.env.NODE_ENV === "production"
+            ? "Production"
+            : "Development",
+      },
+    ],
+
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+
     components: {
       securitySchemes: {
         bearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "Masukkan JWT token tanpa kata 'Bearer'.",
         },
       },
     },
+
+    tags: [
+      { name: "Authentication" },
+      { name: "Category" },
+      { name: "Transaction" },
+      { name: "Report" },
+    ],
   },
 
   apis: [
@@ -38,6 +55,4 @@ const options = {
   ],
 };
 
-const swaggerSpec = swaggerJsdoc(options);
-
-export default swaggerSpec;
+export default swaggerJsdoc(options);

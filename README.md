@@ -1,5 +1,7 @@
 # KPS Tracking API
 
+[![CI](https://github.com/ressaeka/Personal-Finance-Management-System/actions/workflows/ci.yml/badge.svg)](https://github.com/ressaeka/Personal-Finance-Management-System/actions/workflows/ci.yml)
+
 REST API untuk aplikasi **KPS Tracking** — sistem pencatatan keuangan pribadi yang mencatat **pemasukan** dan **pengeluaran**, mengelompokkannya ke dalam kategori, serta menyajikan **laporan keuangan** (ringkasan total, rata-rata, transaksi tertinggi/terendah, dan breakdown per kategori) dalam satu halaman.
 
 Dibangun dengan arsitektur **layered (Route → Controller → Service → Repository)** yang clean dan mudah diuji, plus praktik keamanan level produksi.
@@ -15,7 +17,7 @@ Dibangun dengan arsitektur **layered (Route → Controller → Service → Repos
 | Autentikasi | JWT (access + refresh token) |
 | Validasi | Zod 4 |
 | Logging | Pino + pino-http (dengan redaction otomatis) |
-| Testing | Jest + Supertest (57 test) |
+| Testing | Jest + Supertest (182 test) |
 | Dokumentasi API | Swagger UI |
 | Deployment | Docker (dev & prod) + docker-compose |
 
