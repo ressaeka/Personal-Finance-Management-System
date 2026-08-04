@@ -8,7 +8,7 @@ paths:
         - bearerAuth: []
 
       responses:
-        '200':
+        "200":
           description: List category
 
     post:
@@ -23,10 +23,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCategoryRequest'
+              $ref: "#/components/schemas/CreateCategoryRequest"
 
       responses:
-        '201':
+        "201":
           description: Category berhasil dibuat
 
   /api/v1/category/{id}:
@@ -45,7 +45,7 @@ paths:
             type: integer
 
       responses:
-        '200':
+        "200":
           description: Detail category
 
     put:
@@ -67,10 +67,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCategoryRequest'
+              $ref: "#/components/schemas/UpdateCategoryRequest"
 
       responses:
-        '200':
+        "200":
           description: Category berhasil diupdate
 
     delete:
@@ -88,5 +88,5 @@ paths:
             type: integer
 
       responses:
-        '200':
+        "200":
           description: Category berhasil dihapus

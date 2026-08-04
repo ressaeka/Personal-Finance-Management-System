@@ -49,7 +49,7 @@ describe("createTransaksiService", () => {
     });
 
     expect(repo.createTransaksi).toHaveBeenCalledWith(
-      expect.objectContaining({ jumlah: 5000000, deskripsi: "Gaji bulan Juli" })
+      expect.objectContaining({ jumlah: 5000000, deskripsi: "Gaji bulan Juli" }),
     );
     expect(result.jumlah).toBe(5000000);
   });
@@ -70,17 +70,19 @@ describe("createTransaksiService", () => {
     await createTransaksiService(1, { categoryId: 1, jumlah: 100000 });
 
     expect(repo.createTransaksi).toHaveBeenCalledWith(
-      expect.objectContaining({ deskripsi: null, tanggal: expect.any(Date) })
+      expect.objectContaining({ deskripsi: null, tanggal: expect.any(Date) }),
     );
   });
 
   it("should throw 404 when category not found", async () => {
     categoryRepo.findCategoryById.mockResolvedValue(null);
 
-    await expect(createTransaksiService(1, { categoryId: 999, jumlah: 100 })).rejects.toMatchObject({
-      statusCode: 404,
-      message: expect.stringContaining("Category"),
-    });
+    await expect(createTransaksiService(1, { categoryId: 999, jumlah: 100 })).rejects.toMatchObject(
+      {
+        statusCode: 404,
+        message: expect.stringContaining("Category"),
+      },
+    );
   });
 });
 

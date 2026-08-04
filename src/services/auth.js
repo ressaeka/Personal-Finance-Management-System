@@ -1,8 +1,25 @@
-import { createUser, findUserByEmail, findUserById, findUserByUsername, updateUserById } from "../repositories/auth.js";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken,generateResetToken,verifyResetToken } from "../utils/jwt.js";
+import {
+  createUser,
+  findUserByEmail,
+  findUserById,
+  findUserByUsername,
+  updateUserById,
+} from "../repositories/auth.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+  generateResetToken,
+  verifyResetToken,
+} from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
 import { AppError } from "../utils/appError.js";
-import { setRefreshToken, getRefreshToken, deleteRefreshToken, revokeAllUserTokens } from "../services/refreshToken.js";
+import {
+  setRefreshToken,
+  getRefreshToken,
+  deleteRefreshToken,
+  revokeAllUserTokens,
+} from "../services/refreshToken.js";
 import transporter from "../config/mailer.js";
 
 export const registerService = async (userData) => {
@@ -161,8 +178,7 @@ export const forgotPasswordService = async (email) => {
   });
 
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const resetLink =
-    `${frontendUrl}/reset-password?token=${token}`;
+  const resetLink = `${frontendUrl}/reset-password?token=${token}`;
 
   try {
     await transporter.sendMail({
@@ -186,10 +202,7 @@ export const forgotPasswordService = async (email) => {
   }
 };
 
-export const resetPasswordService = async (
-  token,
-  password
-) => {
+export const resetPasswordService = async (token, password) => {
   let decoded;
   try {
     decoded = verifyResetToken(token);
@@ -210,4 +223,4 @@ export const resetPasswordService = async (
   });
 
   await revokeAllUserTokens(user.id);
-}
+};

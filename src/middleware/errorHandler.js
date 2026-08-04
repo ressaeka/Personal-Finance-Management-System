@@ -3,10 +3,7 @@ import { errorResponse } from "../utils/response.js";
 export const errorHandler = (err, req, res, _next) => {
   const isProduction = process.env.NODE_ENV === "production";
 
-  const statusCode =
-    Number.isInteger(err?.statusCode)
-      ? err.statusCode
-      : 500;
+  const statusCode = Number.isInteger(err?.statusCode) ? err.statusCode : 500;
 
   if (statusCode >= 500) {
     req.log?.error(
@@ -15,7 +12,7 @@ export const errorHandler = (err, req, res, _next) => {
         path: req.originalUrl,
         method: req.method,
       },
-      "Server error"
+      "Server error",
     );
   } else {
     req.log?.warn(
@@ -24,14 +21,11 @@ export const errorHandler = (err, req, res, _next) => {
         path: req.originalUrl,
         method: req.method,
       },
-      "Client error"
+      "Client error",
     );
   }
 
-  const message =
-    statusCode === 500 && isProduction
-      ? "Internal Server Error"
-      : err.message;
+  const message = statusCode === 500 && isProduction ? "Internal Server Error" : err.message;
 
   return errorResponse(res, message, statusCode);
 };

@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-const categoryTypeSchema = z.enum(["PEMASUKAN", "PENGELUARAN"], { error: "Tipe harus 'pemasukan' atau 'pengeluaran'" });
+const categoryTypeSchema = z.enum(["PEMASUKAN", "PENGELUARAN"], {
+  error: "Tipe harus 'pemasukan' atau 'pengeluaran'",
+});
 
 export const userIdSchema = z.object({
   userId: z.coerce
@@ -9,38 +11,25 @@ export const userIdSchema = z.object({
     .positive("User tidak ditemukan/terautentikasi"),
 });
 
-
 export const categoryIdSchema = z.object({
-  id : z.coerce
-    .number()
-    .int("ID category harus angka bulat")
-    .positive("ID category tidak valid"),
+  id: z.coerce.number().int("ID category harus angka bulat").positive("ID category tidak valid"),
 });
 
-
 export const createCategorySchema = z.object({
-  nameCategory: z
-    .string()
-    .trim()
-    .min(3, "Nama category minimal 3 karakter"),
+  nameCategory: z.string().trim().min(3, "Nama category minimal 3 karakter"),
 
   tipe: categoryTypeSchema,
 });
 
+export const updateCategorySchema = z
+  .object({
+    nameCategory: z.string().trim().min(3, "Nama category minimal 3 karakter").optional(),
 
-export const updateCategorySchema = z.object({
-  nameCategory: z
-    .string()
-    .trim()
-    .min(3, "Nama category minimal 3 karakter")
-    .optional(),
-
-  tipe: categoryTypeSchema.optional(),
-}).refine(
-  (data) => Object.keys(data).length > 0,
-  { message: "Minimal satu field harus diisi untuk update" }
-);
-
+    tipe: categoryTypeSchema.optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Minimal satu field harus diisi untuk update",
+  });
 
 export const categoryQuerySchema = z.object({
   page: z.coerce

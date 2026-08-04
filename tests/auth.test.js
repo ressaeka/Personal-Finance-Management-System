@@ -12,14 +12,7 @@ const testUser = {
   password: "Test123!",
 };
 
-const secondUser = {
-  username: "otheruser",
-  email: "other@example.com",
-  password: "Test123!",
-};
-
-const generateResetToken = (payload) =>
-  jwt.sign(payload, JWT_RESET_SECRET, { expiresIn: "15m" });
+const generateResetToken = (payload) => jwt.sign(payload, JWT_RESET_SECRET, { expiresIn: "15m" });
 
 describe("POST /api/v1/auth/register", () => {
   afterEach(async () => {
@@ -67,9 +60,7 @@ describe("POST /api/v1/auth/register", () => {
   });
 
   it("should reject short username", async () => {
-    const res = await request
-      .post("/api/v1/auth/register")
-      .send({ ...testUser, username: "ab" });
+    const res = await request.post("/api/v1/auth/register").send({ ...testUser, username: "ab" });
 
     expect(res.status).toBe(400);
   });
@@ -119,7 +110,7 @@ describe("GET /api/v1/auth/profile", () => {
   let token;
 
   beforeEach(async () => {
-    const res = await request.post("/api/v1/auth/register").send(testUser);
+    await request.post("/api/v1/auth/register").send(testUser);
     const login = await request.post("/api/v1/auth/login").send({
       username: testUser.username,
       password: testUser.password,
@@ -132,9 +123,7 @@ describe("GET /api/v1/auth/profile", () => {
   });
 
   it("should return profile when authenticated", async () => {
-    const res = await request
-      .get("/api/v1/auth/profile")
-      .set("Authorization", `Bearer ${token}`);
+    const res = await request.get("/api/v1/auth/profile").set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.data.username).toBe("testuser");
@@ -242,9 +231,7 @@ describe("POST /api/v1/auth/refresh", () => {
   });
 
   it("should return new tokens", async () => {
-    const res = await request
-      .post("/api/v1/auth/refresh")
-      .send({ refreshToken });
+    const res = await request.post("/api/v1/auth/refresh").send({ refreshToken });
 
     expect(res.status).toBe(200);
     expect(res.body.data.accessToken).toBeDefined();
@@ -252,32 +239,21 @@ describe("POST /api/v1/auth/refresh", () => {
   });
 
   it("should reject invalid refresh token", async () => {
-    const res = await request
-      .post("/api/v1/auth/refresh")
-      .send({ refreshToken: "invalidtoken" });
+    const res = await request.post("/api/v1/auth/refresh").send({ refreshToken: "invalidtoken" });
 
     expect(res.status).toBe(401);
   });
 
   it("should reject empty body", async () => {
-    const res = await request
-      .post("/api/v1/auth/refresh")
-      .send({});
+    const res = await request.post("/api/v1/auth/refresh").send({});
 
     expect(res.status).toBe(400);
   });
 });
 
 describe("POST /api/v1/auth/forgot-password", () => {
-  let token;
-
   beforeEach(async () => {
     await request.post("/api/v1/auth/register").send(testUser);
-    const login = await request.post("/api/v1/auth/login").send({
-      username: testUser.username,
-      password: testUser.password,
-    });
-    token = login.body.data.accessToken;
   });
 
   afterEach(async () => {
@@ -285,9 +261,7 @@ describe("POST /api/v1/auth/forgot-password", () => {
   });
 
   it("should accept valid email and return success", async () => {
-    const res = await request
-      .post("/api/v1/auth/forgot-password")
-      .send({ email: testUser.email });
+    const res = await request.post("/api/v1/auth/forgot-password").send({ email: testUser.email });
 
     expect(res.status).toBe(200);
     expect(res.body.status).toBe("success");
@@ -302,17 +276,13 @@ describe("POST /api/v1/auth/forgot-password", () => {
   });
 
   it("should reject invalid email format", async () => {
-    const res = await request
-      .post("/api/v1/auth/forgot-password")
-      .send({ email: "notanemail" });
+    const res = await request.post("/api/v1/auth/forgot-password").send({ email: "notanemail" });
 
     expect(res.status).toBe(400);
   });
 
   it("should reject empty body", async () => {
-    const res = await request
-      .post("/api/v1/auth/forgot-password")
-      .send({});
+    const res = await request.post("/api/v1/auth/forgot-password").send({});
 
     expect(res.status).toBe(400);
   });
@@ -350,9 +320,7 @@ describe("POST /api/v1/auth/reset-password", () => {
       email: testUser.email,
     });
 
-    await request
-      .post("/api/v1/auth/reset-password")
-      .send({ token, password: "NewPass123!" });
+    await request.post("/api/v1/auth/reset-password").send({ token, password: "NewPass123!" });
 
     const loginRes = await request.post("/api/v1/auth/login").send({
       username: testUser.username,
@@ -369,9 +337,7 @@ describe("POST /api/v1/auth/reset-password", () => {
       email: testUser.email,
     });
 
-    await request
-      .post("/api/v1/auth/reset-password")
-      .send({ token, password: "NewPass123!" });
+    await request.post("/api/v1/auth/reset-password").send({ token, password: "NewPass123!" });
 
     const loginRes = await request.post("/api/v1/auth/login").send({
       username: testUser.username,
@@ -403,9 +369,7 @@ describe("POST /api/v1/auth/reset-password", () => {
   });
 
   it("should reject empty body", async () => {
-    const res = await request
-      .post("/api/v1/auth/reset-password")
-      .send({});
+    const res = await request.post("/api/v1/auth/reset-password").send({});
 
     expect(res.status).toBe(400);
   });
@@ -413,7 +377,6 @@ describe("POST /api/v1/auth/reset-password", () => {
 
 describe("Profile password change revokes sessions", () => {
   let token;
-  let refreshToken;
 
   beforeEach(async () => {
     await request.post("/api/v1/auth/register").send(testUser);
@@ -422,7 +385,6 @@ describe("Profile password change revokes sessions", () => {
       password: testUser.password,
     });
     token = login.body.data.accessToken;
-    refreshToken = login.body.data.refreshToken;
   });
 
   afterEach(async () => {

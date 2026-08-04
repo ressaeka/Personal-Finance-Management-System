@@ -1,32 +1,30 @@
 import prisma from "../config/prisma.js";
 
-
 export const findTransactions = ({ where, skip, take }) => {
-    return prisma.transaksi.findMany({
-        where,
-        include: {
-            category:{
-                select: {
-                    id : true,
-                    nameCategory: true,
-                    tipe:true
-                }
-            }
+  return prisma.transaksi.findMany({
+    where,
+    include: {
+      category: {
+        select: {
+          id: true,
+          nameCategory: true,
+          tipe: true,
         },
-        orderBy:{
-            tanggal:"desc",
-        },
-        skip, 
-        take,
-    })
-}
-
+      },
+    },
+    orderBy: {
+      tanggal: "desc",
+    },
+    skip,
+    take,
+  });
+};
 
 export const countTransactions = (where) => {
-    return prisma.transaksi.count({
-        where,
-    })
-}
+  return prisma.transaksi.count({
+    where,
+  });
+};
 
 export const aggregateTransactions = (where) => {
   return prisma.transaksi.aggregate({
@@ -66,4 +64,3 @@ export const groupByCategory = (where) => {
     },
   });
 };
-

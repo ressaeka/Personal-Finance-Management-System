@@ -10,10 +10,7 @@ export const authenticate = (req, res, next) => {
     }
 
     if (!authorization.startsWith("Bearer ")) {
-      throw new AppError(
-        "Format token salah. Gunakan: Bearer <token>",
-        401
-      );
+      throw new AppError("Format token salah. Gunakan: Bearer <token>", 401);
     }
 
     const [, token] = authorization.split(" ");
@@ -27,18 +24,11 @@ export const authenticate = (req, res, next) => {
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      return next(
-        new AppError(
-          "Token sudah kadaluarsa, silakan login ulang",
-          401
-        )
-      );
+      return next(new AppError("Token sudah kadaluarsa, silakan login ulang", 401));
     }
 
     if (err.name === "JsonWebTokenError") {
-      return next(
-        new AppError("Token tidak valid", 401)
-      );
+      return next(new AppError("Token tidak valid", 401));
     }
 
     return next(err);

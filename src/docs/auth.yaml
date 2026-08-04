@@ -10,9 +10,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: "#/components/schemas/RegisterRequest"
       responses:
-        '201':
+        "201":
           description: Register berhasil
 
   /api/v1/auth/login:
@@ -26,9 +26,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
       responses:
-        '200':
+        "200":
           description: Login berhasil
 
   /api/v1/auth/refresh:
@@ -43,17 +43,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
+              $ref: "#/components/schemas/RefreshTokenRequest"
 
       responses:
-        '200':
+        "200":
           description: Token berhasil diperbarui
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RefreshTokenResponse'
+                $ref: "#/components/schemas/RefreshTokenResponse"
 
-        '401':
+        "401":
           description: Refresh token tidak valid atau telah kedaluwarsa
 
   /api/v1/auth/forgot-password:
@@ -68,13 +68,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ForgotPasswordRequest'
+              $ref: "#/components/schemas/ForgotPasswordRequest"
 
       responses:
-        '200':
+        "200":
           description: Email reset password berhasil dikirim
 
-        '404':
+        "404":
           description: Email tidak ditemukan
 
   /api/v1/auth/reset-password:
@@ -89,13 +89,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResetPasswordRequest'
+              $ref: "#/components/schemas/ResetPasswordRequest"
 
       responses:
-        '200':
+        "200":
           description: Password berhasil diubah
 
-        '400':
+        "400":
           description: Token tidak valid atau sudah kedaluwarsa
 
   /api/v1/auth/profile:
@@ -106,7 +106,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Profile user
 
     put:
@@ -121,10 +121,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateProfileRequest'
+              $ref: "#/components/schemas/UpdateProfileRequest"
 
       responses:
-        '200':
+        "200":
           description: Profile berhasil diupdate
 
   /api/v1/auth/logout:
@@ -141,8 +141,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
+              $ref: "#/components/schemas/RefreshTokenRequest"
 
       responses:
-        '200':
+        "200":
           description: Logout berhasil

@@ -16,10 +16,7 @@ const options = {
     servers: [
       {
         url: process.env.API_URL || "http://localhost:3000",
-        description:
-          process.env.NODE_ENV === "production"
-            ? "Production"
-            : "Development",
+        description: process.env.NODE_ENV === "production" ? "Production" : "Development",
       },
     ],
 
@@ -47,12 +44,7 @@ const options = {
     ],
   },
 
-  apis: [
-    "./src/docs/*.yaml",
-    "./src/docs/*.yml",
-    "./src/routes/*.js",
-    "./src/controllers/*.js",
-  ],
+  apis: ["./src/docs/*.yaml", "./src/docs/*.yml", "./src/routes/*.js", "./src/controllers/*.js"],
 };
 
 export default swaggerJsdoc(options);

@@ -8,18 +8,18 @@ Dibangun dengan arsitektur **layered (Route → Controller → Service → Repos
 
 ## Tech Stack
 
-| Layer | Teknologi |
-|---|---|
-| Runtime | Node.js 22 (ES Modules) |
-| Framework | Express 5 |
-| Database | PostgreSQL + Prisma ORM 7 |
-| Cache / Refresh Token | Redis (ioredis) |
-| Autentikasi | JWT (access + refresh token) |
-| Validasi | Zod 4 |
-| Logging | Pino + pino-http (dengan redaction otomatis) |
-| Testing | Jest + Supertest (182 test) |
-| Dokumentasi API | Swagger UI |
-| Deployment | Docker (dev & prod) + docker-compose |
+| Layer                 | Teknologi                                    |
+| --------------------- | -------------------------------------------- |
+| Runtime               | Node.js 22 (ES Modules)                      |
+| Framework             | Express 5                                    |
+| Database              | PostgreSQL + Prisma ORM 7                    |
+| Cache / Refresh Token | Redis (ioredis)                              |
+| Autentikasi           | JWT (access + refresh token)                 |
+| Validasi              | Zod 4                                        |
+| Logging               | Pino + pino-http (dengan redaction otomatis) |
+| Testing               | Jest + Supertest (182 test)                  |
+| Dokumentasi API       | Swagger UI                                   |
+| Deployment            | Docker (dev & prod) + docker-compose         |
 
 ## Fitur
 
@@ -27,7 +27,7 @@ Dibangun dengan arsitektur **layered (Route → Controller → Service → Repos
 - **Manajemen kategori**: kategori pemasukan/pengeluaran per user, soft delete
 - **Manajemen transaksi**: catat pemasukan/pengeluaran dengan deskripsi & tanggal, soft delete
 - **Laporan keuangan**: ringkasan, breakdown per kategori, filter tanggal/kategori/tipe, pagination
-- **Keamanan**: bcrypt (cost 12), JWT dua jenis token, refresh token di Redis dengan fitur *revoke all sessions*, rate limiting, CORS whitelist, Helmet, redaction data sensitif di log
+- **Keamanan**: bcrypt (cost 12), JWT dua jenis token, refresh token di Redis dengan fitur _revoke all sessions_, rate limiting, CORS whitelist, Helmet, redaction data sensitif di log
 - **Health check**: ping database + Redis, laporan status per-service
 - **Dokumentasi API**: Swagger UI (dilindungi basic auth)
 
@@ -105,22 +105,22 @@ Test memakai database terpisah (`DATABASE_URL_TEST`) dan di-reset otomatis di se
 
 ## Environment Variables
 
-| Variabel | Deskripsi |
-|---|---|
-| `PORT` | Port server (default `3000`) |
-| `NODE_ENV` | `development` / `test` / `production` |
-| `JWT_SECRET` | Secret untuk access token (15 menit) |
-| `JWT_REFRESH_SECRET` | Secret untuk refresh token (7 hari) |
-| `JWT_RESET_SECRET` | Secret untuk token reset password (15 menit) |
-| `DATABASE_URL` | Koneksi Prisma (produksi/dev) |
-| `DIRECT_URL` | Koneksi langsung (untuk Supabase/Prisma) |
-| `DATABASE_URL_TEST` | Koneksi database test |
-| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | Konfigurasi Redis |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | SMTP untuk email reset password |
-| `FRONTEND_URL` | URL frontend untuk link reset password |
-| `CORS_ORIGINS` | Daftar origin yang diizinkan (pisahkan koma) |
-| `ENABLE_SWAGGER` | `true` untuk mengaktifkan `/api-docs` |
-| `SWAGGER_USER` / `SWAGGER_PASSWORD` | Kredensial basic auth Swagger |
+| Variabel                                              | Deskripsi                                    |
+| ----------------------------------------------------- | -------------------------------------------- |
+| `PORT`                                                | Port server (default `3000`)                 |
+| `NODE_ENV`                                            | `development` / `test` / `production`        |
+| `JWT_SECRET`                                          | Secret untuk access token (15 menit)         |
+| `JWT_REFRESH_SECRET`                                  | Secret untuk refresh token (7 hari)          |
+| `JWT_RESET_SECRET`                                    | Secret untuk token reset password (15 menit) |
+| `DATABASE_URL`                                        | Koneksi Prisma (produksi/dev)                |
+| `DIRECT_URL`                                          | Koneksi langsung (untuk Supabase/Prisma)     |
+| `DATABASE_URL_TEST`                                   | Koneksi database test                        |
+| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD`        | Konfigurasi Redis                            |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | SMTP untuk email reset password              |
+| `FRONTEND_URL`                                        | URL frontend untuk link reset password       |
+| `CORS_ORIGINS`                                        | Daftar origin yang diizinkan (pisahkan koma) |
+| `ENABLE_SWAGGER`                                      | `true` untuk mengaktifkan `/api-docs`        |
+| `SWAGGER_USER` / `SWAGGER_PASSWORD`                   | Kredensial basic auth Swagger                |
 
 ## API Endpoints
 
@@ -128,50 +128,50 @@ Base URL: `http://localhost:3000/api/v1`
 
 ### Auth
 
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| POST | `/auth/register` | Daftar akun baru | - |
-| POST | `/auth/login` | Login, mengembalikan access + refresh token | - |
-| POST | `/auth/refresh` | Perbarui access token dengan refresh token | - |
-| POST | `/auth/logout` | Logout, hapus refresh token dari Redis | ✅ |
-| GET | `/auth/profile` | Ambil data profil user | ✅ |
-| PUT | `/auth/profile` | Update profil (username/email/password) | ✅ |
-| POST | `/auth/forgot-password` | Kirim link reset password ke email | - |
-| POST | `/auth/reset-password` | Reset password dengan token | - |
+| Method | Endpoint                | Deskripsi                                   | Auth |
+| ------ | ----------------------- | ------------------------------------------- | ---- |
+| POST   | `/auth/register`        | Daftar akun baru                            | -    |
+| POST   | `/auth/login`           | Login, mengembalikan access + refresh token | -    |
+| POST   | `/auth/refresh`         | Perbarui access token dengan refresh token  | -    |
+| POST   | `/auth/logout`          | Logout, hapus refresh token dari Redis      | ✅   |
+| GET    | `/auth/profile`         | Ambil data profil user                      | ✅   |
+| PUT    | `/auth/profile`         | Update profil (username/email/password)     | ✅   |
+| POST   | `/auth/forgot-password` | Kirim link reset password ke email          | -    |
+| POST   | `/auth/reset-password`  | Reset password dengan token                 | -    |
 
 ### Category
 
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| POST | `/category` | Buat kategori (`nameCategory`, `tipe: PEMASUKAN/PENGELUARAN`) | ✅ |
-| GET | `/category` | List kategori (pagination) | ✅ |
-| GET | `/category/:id` | Detail kategori | ✅ |
-| PUT | `/category/:id` | Update kategori | ✅ |
-| DELETE | `/category/:id` | Hapus kategori (soft delete) | ✅ |
+| Method | Endpoint        | Deskripsi                                                     | Auth |
+| ------ | --------------- | ------------------------------------------------------------- | ---- |
+| POST   | `/category`     | Buat kategori (`nameCategory`, `tipe: PEMASUKAN/PENGELUARAN`) | ✅   |
+| GET    | `/category`     | List kategori (pagination)                                    | ✅   |
+| GET    | `/category/:id` | Detail kategori                                               | ✅   |
+| PUT    | `/category/:id` | Update kategori                                               | ✅   |
+| DELETE | `/category/:id` | Hapus kategori (soft delete)                                  | ✅   |
 
 ### Transaksi
 
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| POST | `/transaksi` | Catat transaksi (`categoryId`, `jumlah`, `deskripsi?`, `tanggal?`) | ✅ |
-| GET | `/transaksi` | List transaksi (pagination) | ✅ |
-| GET | `/transaksi/:id` | Detail transaksi | ✅ |
-| PUT | `/transaksi/:id` | Update transaksi | ✅ |
-| DELETE | `/transaksi/:id` | Hapus transaksi (soft delete) | ✅ |
+| Method | Endpoint         | Deskripsi                                                          | Auth |
+| ------ | ---------------- | ------------------------------------------------------------------ | ---- |
+| POST   | `/transaksi`     | Catat transaksi (`categoryId`, `jumlah`, `deskripsi?`, `tanggal?`) | ✅   |
+| GET    | `/transaksi`     | List transaksi (pagination)                                        | ✅   |
+| GET    | `/transaksi/:id` | Detail transaksi                                                   | ✅   |
+| PUT    | `/transaksi/:id` | Update transaksi                                                   | ✅   |
+| DELETE | `/transaksi/:id` | Hapus transaksi (soft delete)                                      | ✅   |
 
 ### Laporan
 
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| GET | `/laporan` | Laporan keuangan: summary, breakdown kategori, transaksi | ✅ |
+| Method | Endpoint   | Deskripsi                                                | Auth |
+| ------ | ---------- | -------------------------------------------------------- | ---- |
+| GET    | `/laporan` | Laporan keuangan: summary, breakdown kategori, transaksi | ✅   |
 
 Query params laporan: `page`, `limit`, `categoryId`, `tipe`, `startDate` + `endDate` (format `YYYY-MM-DD`, harus diisi bersamaan).
 
 ### Health
 
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| GET | `/health` | Status server + ping database & Redis (200 ok / 503 degraded) |
+| Method | Endpoint  | Deskripsi                                                     |
+| ------ | --------- | ------------------------------------------------------------- |
+| GET    | `/health` | Status server + ping database & Redis (200 ok / 503 degraded) |
 
 Dokumentasi interaktif: `GET /api-docs` (aktif saat `ENABLE_SWAGGER=true`).
 
@@ -183,7 +183,7 @@ Semua endpoint mengembalikan format konsisten:
 {
   "status": "success",
   "message": "Login berhasil",
-  "data": { }
+  "data": {}
 }
 ```
 

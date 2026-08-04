@@ -18,12 +18,7 @@ export const setRefreshToken = async (userId, refreshToken) => {
   if (!redis || isTest) return;
   try {
     const multi = redis.multi();
-    multi.set(
-      `refresh_token:${refreshToken}`,
-      String(userId),
-      "EX",
-      7 * 24 * 60 * 60
-    );
+    multi.set(`refresh_token:${refreshToken}`, String(userId), "EX", 7 * 24 * 60 * 60);
     multi.sadd(userTokensKey(userId), refreshToken);
     multi.expire(userTokensKey(userId), 7 * 24 * 60 * 60);
     await multi.exec();

@@ -19,7 +19,9 @@ describe("authenticate middleware", () => {
 
     authenticate(createReq(undefined), createRes(), next);
 
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 401, message: "Token wajib ada" }));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ statusCode: 401, message: "Token wajib ada" }),
+    );
   });
 
   it("should reject non-Bearer format", () => {
@@ -36,7 +38,9 @@ describe("authenticate middleware", () => {
 
     authenticate(createReq("Bearer "), createRes(), next);
 
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 401, message: "Token kosong" }));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ statusCode: 401, message: "Token kosong" }),
+    );
   });
 
   it("should set req.user and call next for valid token", () => {
@@ -74,6 +78,8 @@ describe("authenticate middleware", () => {
 
     authenticate(createReq("Bearer bad.token"), createRes(), next);
 
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 401, message: "Token tidak valid" }));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ statusCode: 401, message: "Token tidak valid" }),
+    );
   });
 });

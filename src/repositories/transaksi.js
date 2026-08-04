@@ -1,6 +1,5 @@
 import prisma from "../config/prisma.js";
 
-
 export const createTransaksi = (data) => {
   return prisma.transaksi.create({
     data,
@@ -20,7 +19,6 @@ export const createTransaksi = (data) => {
     },
   });
 };
-
 
 export const findTransaksiById = (where) => {
   return prisma.transaksi.findFirst({
@@ -42,7 +40,6 @@ export const findTransaksiById = (where) => {
     },
   });
 };
-
 
 export const findAllTransaksi = ({ userId, skip, take }) => {
   return prisma.transaksi.findMany({
@@ -77,7 +74,6 @@ export const findAllTransaksi = ({ userId, skip, take }) => {
   });
 };
 
-
 export const countTransaksi = (userId) => {
   return prisma.transaksi.count({
     where: {
@@ -86,7 +82,6 @@ export const countTransaksi = (userId) => {
     },
   });
 };
-
 
 export const updateTransaksi = (id, userId, data) => {
   return prisma.transaksi.update({
@@ -111,7 +106,6 @@ export const updateTransaksi = (id, userId, data) => {
     },
   });
 };
-
 
 export const deleteTransaksi = (id, userId) => {
   return prisma.transaksi.update({

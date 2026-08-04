@@ -132,9 +132,7 @@ describe("GET /api/v1/category/:id", () => {
   });
 
   it("should return 404 for non-existent category", async () => {
-    const res = await request
-      .get("/api/v1/category/99999")
-      .set("Authorization", `Bearer ${token}`);
+    const res = await request.get("/api/v1/category/99999").set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(404);
   });

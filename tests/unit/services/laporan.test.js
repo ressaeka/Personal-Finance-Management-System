@@ -55,7 +55,13 @@ describe("getLaporanService", () => {
   });
 
   it("should fallback summary values to 0 when aggregate empty", async () => {
-    const empty = { _count: { id: 0 }, _sum: { jumlah: null }, _avg: { jumlah: null }, _max: { jumlah: null }, _min: { jumlah: null } };
+    const empty = {
+      _count: { id: 0 },
+      _sum: { jumlah: null },
+      _avg: { jumlah: null },
+      _max: { jumlah: null },
+      _min: { jumlah: null },
+    };
     repo.findTransactions.mockResolvedValue([]);
     repo.countTransactions.mockResolvedValue(0);
     repo.aggregateTransactions.mockResolvedValue(empty);

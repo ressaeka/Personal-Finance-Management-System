@@ -20,11 +20,11 @@ if (!isTest) {
   });
 
   redis.on("connect", () => {
-      logger.info("Redis Connected");
+    logger.info("Redis Connected");
   });
 
   redis.on("error", (err) => {
-      logger.error(err, "Redis Error");
+    logger.error(err, "Redis Error");
   });
 }
 

@@ -1,6 +1,6 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
-const isTest = process.env.NODE_ENV === 'test';
+const isTest = process.env.NODE_ENV === "test";
 
 const WINDOW_MS = 15 * 60 * 1000;
 
@@ -19,7 +19,7 @@ const createLimiter = ({ max, message, skip }) =>
           ip: req.ip,
           path: req.originalUrl,
         },
-        "Rate limit exceeded"
+        "Rate limit exceeded",
       );
 
       return res.status(429).json({

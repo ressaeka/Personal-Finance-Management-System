@@ -19,5 +19,5 @@ paths:
             type: integer
 
       responses:
-        '200':
+        "200":
           description: Data laporan

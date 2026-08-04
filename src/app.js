@@ -40,7 +40,7 @@ app.use(globalLimiter);
 app.use(
   express.json({
     limit: "10kb",
-  })
+  }),
 );
 
 /* --------------------------- Health Check -------------------------- */
@@ -68,19 +68,14 @@ if (process.env.ENABLE_SWAGGER === "true") {
       challenge: true,
     }),
     swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec)
+    swaggerUi.setup(swaggerSpec),
   );
 }
 
 /* ------------------------------ 404 ------------------------------ */
 
 app.use((req, res, next) => {
-  next(
-    new AppError(
-      `Route ${req.method} ${req.originalUrl} tidak ditemukan`,
-      404
-    )
-  );
+  next(new AppError(`Route ${req.method} ${req.originalUrl} tidak ditemukan`, 404));
 });
 
 /* ------------------------- Global Error --------------------------- */

@@ -67,9 +67,7 @@ describe("Validator edge cases — laporan", () => {
 
 describe("Validator edge cases — transaksi", () => {
   it("should reject non-numeric categoryId in params", async () => {
-    const res = await request
-      .get("/api/v1/transaksi/abc")
-      .set("Authorization", `Bearer ${token}`);
+    const res = await request.get("/api/v1/transaksi/abc").set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(400);
   });

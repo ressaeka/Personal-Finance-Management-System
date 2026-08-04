@@ -1,6 +1,4 @@
 import pino from "pino";
-import pinoHttp from "pino-http";
-
 
 const logger = pino({
   level: process.env.LOG_LEVEL || "info",
@@ -9,7 +7,7 @@ const logger = pino({
     "req.headers.authorization",
     "req.headers.cookie",
     "req.body.password",
-    "req.body.refreshToken"
+    "req.body.refreshToken",
   ],
 
   transport:
@@ -19,10 +17,10 @@ const logger = pino({
           options: {
             colorize: true,
             translateTime: "SYS:standard",
-            ignore: "pid,hostname"
-          }
+            ignore: "pid,hostname",
+          },
         }
-      : undefined
+      : undefined,
 });
 
 export default logger;

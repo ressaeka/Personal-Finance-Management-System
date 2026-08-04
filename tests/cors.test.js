@@ -13,9 +13,7 @@ describe("CORS middleware", () => {
   });
 
   it("should allow whitelisted origin and reflect it", async () => {
-    const res = await request
-      .get("/health")
-      .set("Origin", "http://localhost:5173");
+    const res = await request.get("/health").set("Origin", "http://localhost:5173");
 
     expect(res.status).toBe(200);
     expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
@@ -23,9 +21,7 @@ describe("CORS middleware", () => {
   });
 
   it("should reject disallowed origin with 403", async () => {
-    const res = await request
-      .get("/health")
-      .set("Origin", "https://evil.com");
+    const res = await request.get("/health").set("Origin", "https://evil.com");
 
     expect(res.status).toBe(403);
     expect(res.body.status).toBe("failed");

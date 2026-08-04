@@ -24,10 +24,7 @@ async function startServer() {
 
       server.close(async () => {
         try {
-          await Promise.all([
-            prisma.$disconnect(),
-            disconnectRedis(),
-          ]);
+          await Promise.all([prisma.$disconnect(), disconnectRedis()]);
 
           logger.info("All connections closed.");
           process.exit(0);
@@ -40,7 +37,6 @@ async function startServer() {
 
     process.on("SIGINT", shutdown);
     process.on("SIGTERM", shutdown);
-
   } catch (err) {
     logger.fatal({ err }, "Application failed to start");
     process.exit(1);

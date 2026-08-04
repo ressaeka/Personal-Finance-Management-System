@@ -8,12 +8,8 @@ jest.unstable_mockModule("../../../src/config/redis.js", () => ({
   disconnectRedis: jest.fn(),
 }));
 
-const {
-  setRefreshToken,
-  getRefreshToken,
-  deleteRefreshToken,
-  revokeAllUserTokens,
-} = await import("../../../src/services/refreshToken.js");
+const { setRefreshToken, getRefreshToken, deleteRefreshToken, revokeAllUserTokens } =
+  await import("../../../src/services/refreshToken.js");
 
 const jwtModule = await import("../../../src/utils/jwt.js");
 

@@ -16,24 +16,21 @@ export const generateAccessToken = (payload) =>
     expiresIn: JWT_EXPIRES_IN,
   });
 
-export const verifyToken = (token) =>
-  jwt.verify(token, JWT_SECRET);
+export const verifyToken = (token) => jwt.verify(token, JWT_SECRET);
 
 export const generateRefreshToken = (payload) =>
   jwt.sign(payload, JWT_REFRESH_SECRET, {
     expiresIn: JWT_REFRESH_EXPIRES_IN,
   });
 
-export const verifyRefreshToken = (token) =>
-  jwt.verify(token, JWT_REFRESH_SECRET);
+export const verifyRefreshToken = (token) => jwt.verify(token, JWT_REFRESH_SECRET);
 
 export const generateResetToken = (payload) =>
   jwt.sign(payload, JWT_RESET_SECRET, {
     expiresIn: "15m",
   });
 
-export const verifyResetToken = (token) =>
-  jwt.verify(token, JWT_RESET_SECRET);
+export const verifyResetToken = (token) => jwt.verify(token, JWT_RESET_SECRET);
 
 // backward compatibility
 export const generateToken = generateAccessToken;

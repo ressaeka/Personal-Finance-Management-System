@@ -90,9 +90,7 @@ describe("E2E: full user journey", () => {
   });
 
   it("7. fetch laporan with correct summary", async () => {
-    const res = await request
-      .get("/api/v1/laporan")
-      .set("Authorization", `Bearer ${accessToken}`);
+    const res = await request.get("/api/v1/laporan").set("Authorization", `Bearer ${accessToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body.data.summary.totalTransactions).toBe(2);

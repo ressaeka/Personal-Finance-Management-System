@@ -16,11 +16,7 @@ export const getLaporan = async (req, res, next) => {
       tipe,
     });
 
-    return successResponse(
-      res,
-      laporan,
-      "Berhasil mengambil laporan"
-    );
+    return successResponse(res, laporan, "Berhasil mengambil laporan");
   } catch (err) {
     next(err);
   }

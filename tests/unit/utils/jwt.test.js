@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import jwt from "jsonwebtoken";
 import {
   generateAccessToken,
@@ -52,11 +51,9 @@ describe("jwt utils", () => {
     });
 
     it("should throw TokenExpiredError for expired refresh token", () => {
-      const expired = jwt.sign(
-        payload,
-        process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-        { expiresIn: "-1s" }
-      );
+      const expired = jwt.sign(payload, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
+        expiresIn: "-1s",
+      });
 
       expect(() => verifyRefreshToken(expired)).toThrow(jwt.TokenExpiredError);
     });

@@ -38,7 +38,11 @@ describe("createCategoryService", () => {
 
     const result = await createCategoryService(1, { nameCategory: "Gaji", tipe: "PEMASUKAN" });
 
-    expect(repo.createCategory).toHaveBeenCalledWith({ userId: 1, nameCategory: "Gaji", tipe: "PEMASUKAN" });
+    expect(repo.createCategory).toHaveBeenCalledWith({
+      userId: 1,
+      nameCategory: "Gaji",
+      tipe: "PEMASUKAN",
+    });
     expect(result.nameCategory).toBe("Gaji");
   });
 
@@ -46,7 +50,7 @@ describe("createCategoryService", () => {
     repo.findCategoryByNameIncludeDeleted.mockResolvedValue({ ...category, isDeleted: false });
 
     await expect(
-      createCategoryService(1, { nameCategory: "Gaji", tipe: "PEMASUKAN" })
+      createCategoryService(1, { nameCategory: "Gaji", tipe: "PEMASUKAN" }),
     ).rejects.toMatchObject({ statusCode: 409 });
     expect(repo.createCategory).not.toHaveBeenCalled();
   });

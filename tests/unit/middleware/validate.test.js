@@ -32,7 +32,7 @@ describe("validate middleware", () => {
       expect.objectContaining({
         statusCode: 400,
         isOperational: true,
-      })
+      }),
     );
     const error = next.mock.calls[0][0];
     expect(error.message).toContain("Nama minimal 3 karakter");
@@ -53,7 +53,11 @@ describe("validate middleware", () => {
     const req = createReq({}, {}, { id: "abc" });
     const next = createNext();
 
-    validate(z.object({ id: z.coerce.number().int("ID harus angka") }), "params")(req, createRes(), next);
+    validate(z.object({ id: z.coerce.number().int("ID harus angka") }), "params")(
+      req,
+      createRes(),
+      next,
+    );
 
     expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 400 }));
   });

@@ -15,10 +15,7 @@ import { AppError } from "../utils/appError.js";
 export const createCategoryService = async (userId, body) => {
   const { nameCategory, tipe } = body;
 
-  const category = await findCategoryByNameIncludeDeleted(
-    userId,
-    nameCategory
-  );
+  const category = await findCategoryByNameIncludeDeleted(userId, nameCategory);
 
   if (category) {
     if (!category.isDeleted) {
@@ -35,7 +32,7 @@ export const createCategoryService = async (userId, body) => {
   });
 };
 
-export const getAllCategoryService = async ( userId, { page = 1, limit = 50 } ) => {
+export const getAllCategoryService = async (userId, { page = 1, limit = 50 }) => {
   page = Number(page);
   limit = Number(limit);
 
@@ -75,7 +72,7 @@ export const getCategoryByIdService = async (categoryId, userId) => {
   return category;
 };
 
-export const updateCategoryService = async ( categoryId, userId, body ) => {
+export const updateCategoryService = async (categoryId, userId, body) => {
   const category = await findCategoryById({
     id: categoryId,
     userId,
@@ -87,10 +84,7 @@ export const updateCategoryService = async ( categoryId, userId, body ) => {
   }
 
   if (body.nameCategory) {
-    const existCategory = await findCategoryByName(
-      userId,
-      body.nameCategory
-    );
+    const existCategory = await findCategoryByName(userId, body.nameCategory);
 
     if (existCategory && existCategory.id !== categoryId) {
       throw new AppError("Category sudah digunakan", 409);
@@ -104,10 +98,7 @@ export const updateCategoryService = async ( categoryId, userId, body ) => {
   return await updateCategory(categoryId, userId, updateData);
 };
 
-export const deleteCategoryService = async (
-  categoryId,
-  userId
-) => {
+export const deleteCategoryService = async (categoryId, userId) => {
   const category = await findCategoryById({
     id: categoryId,
     userId,

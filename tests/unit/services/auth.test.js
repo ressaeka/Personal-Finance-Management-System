@@ -73,7 +73,7 @@ describe("registerService", () => {
     repo.findUserByEmail.mockResolvedValue(user);
 
     await expect(
-      registerService({ username: "new", email: "test@example.com", password: "Test123!" })
+      registerService({ username: "new", email: "test@example.com", password: "Test123!" }),
     ).rejects.toMatchObject({ statusCode: 409, message: expect.stringContaining("Email") });
     expect(repo.createUser).not.toHaveBeenCalled();
   });
@@ -83,7 +83,7 @@ describe("registerService", () => {
     repo.findUserByUsername.mockResolvedValue(user);
 
     await expect(
-      registerService({ username: "testuser", email: "other@example.com", password: "Test123!" })
+      registerService({ username: "testuser", email: "other@example.com", password: "Test123!" }),
     ).rejects.toMatchObject({ statusCode: 409, message: expect.stringContaining("Username") });
   });
 });
@@ -114,7 +114,9 @@ describe("loginService", () => {
   it("should reject wrong password", async () => {
     repo.findUserByUsername.mockResolvedValue(user);
 
-    await expect(loginService({ username: "testuser", password: "WrongPass1!" })).rejects.toMatchObject({
+    await expect(
+      loginService({ username: "testuser", password: "WrongPass1!" }),
+    ).rejects.toMatchObject({
       statusCode: 401,
     });
   });
@@ -127,7 +129,7 @@ describe("refreshTokenService", () => {
     const validToken = (await import("jsonwebtoken")).default.sign(
       { id: 1, username: "testuser", email: "test@example.com" },
       process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     refreshTokenModule.getRefreshToken.mockResolvedValue("1");
@@ -150,7 +152,7 @@ describe("refreshTokenService", () => {
     const validToken = (await import("jsonwebtoken")).default.sign(
       { id: 1, username: "testuser", email: "test@example.com" },
       process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     refreshTokenModule.getRefreshToken.mockResolvedValue("999");
@@ -201,7 +203,11 @@ describe("updateProfileService", () => {
     repo.findUserById.mockResolvedValue(user);
     repo.findUserByEmail.mockResolvedValue(null);
     repo.findUserByUsername.mockResolvedValue(null);
-    repo.updateUserById.mockResolvedValue({ ...user, username: "newuser", email: "new@example.com" });
+    repo.updateUserById.mockResolvedValue({
+      ...user,
+      username: "newuser",
+      email: "new@example.com",
+    });
 
     const result = await updateProfileService(1, {
       username: "newuser",
@@ -250,7 +256,9 @@ describe("updateProfileService", () => {
   it("should throw 404 when user not found", async () => {
     repo.findUserById.mockResolvedValue(null);
 
-    await expect(updateProfileService(999, { username: "x" })).rejects.toMatchObject({ statusCode: 404 });
+    await expect(updateProfileService(999, { username: "x" })).rejects.toMatchObject({
+      statusCode: 404,
+    });
   });
 });
 
@@ -293,7 +301,7 @@ describe("resetPasswordService", () => {
     const resetToken = (await import("jsonwebtoken")).default.sign(
       { id: 1, email: "test@example.com" },
       process.env.JWT_RESET_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     repo.findUserById.mockResolvedValue(user);
@@ -316,7 +324,7 @@ describe("resetPasswordService", () => {
     const resetToken = (await import("jsonwebtoken")).default.sign(
       { id: 999, email: "test@example.com" },
       process.env.JWT_RESET_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     repo.findUserById.mockResolvedValue(null);

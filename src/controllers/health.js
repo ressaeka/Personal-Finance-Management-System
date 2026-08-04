@@ -17,7 +17,7 @@ export const healthCheck = async (req, res) => {
     checks.database = "up";
   } catch (err) {
     healthy = false;
-    logger.error({ err }, "Database health check failed");  
+    logger.error({ err }, "Database health check failed");
   }
 
   if (redis) {

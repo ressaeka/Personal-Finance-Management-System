@@ -24,9 +24,7 @@ describe("Error handling", () => {
 
   it("should return 413 for body larger than 10kb", async () => {
     const bigBody = { username: "x".repeat(12000), password: "y".repeat(12000) };
-    const res = await request
-      .post("/api/v1/auth/register")
-      .send(bigBody);
+    const res = await request.post("/api/v1/auth/register").send(bigBody);
 
     expect(res.status).toBe(413);
   });
@@ -40,9 +38,7 @@ describe("Error handling", () => {
   });
 
   it("should return 401 for malformed Authorization header", async () => {
-    const res = await request
-      .get("/api/v1/transaksi")
-      .set("Authorization", "Basic abc123");
+    const res = await request.get("/api/v1/transaksi").set("Authorization", "Basic abc123");
 
     expect(res.status).toBe(401);
     expect(res.body.message).toContain("Bearer");
